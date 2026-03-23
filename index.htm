@@ -1,318 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" x-data="{ mobileMenu: false }">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SB Skate Collective</title>
+  <title>SB Skate Collective — Lookbook SS26</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'sb-black': '#0c0c0c',
+            'sb-white': '#f4f2ed',
+            'sb-grey': '#888888',
+            'sb-mid': '#cccccc',
+            'sb-accent': '#c8ff00',
+            'sb-sci': '#00cfff',
+          },
+          fontFamily: {
+            sans: ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    [x-cloak] { display: none !important; }
 
-    :root {
-      --black: #0c0c0c;
-      --white: #f4f2ed;
-      --grey: #888;
-      --mid: #ccc;
-      --accent: #c8ff00;
-      --sci: #00cfff;
+    /* Ticker animation */
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
     }
+    .ticker-track { animation: ticker 24s linear infinite; }
 
-    html { scroll-behavior: smooth; }
+    /* Smooth board hover */
+    .board-card:hover .deck-art { filter: drop-shadow(0 20px 40px rgba(0,0,0,.9)); transform: translateY(-6px); }
+    .deck-art { transition: transform .35s ease, filter .35s ease; }
 
-    body {
-      background: var(--white);
-      color: var(--black);
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-size: 13px;
-      overflow-x: hidden;
-    }
-
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      background: var(--white);
-      border-bottom: 1.5px solid var(--black);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 40px; height: 60px;
-    }
-    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-logo svg { width: 32px; height: 32px; }
-    .nav-brand { font-size: 10.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--black); }
-    .nav-links { display: flex; gap: 28px; list-style: none; }
-    .nav-links a { font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--black); text-decoration: none; transition: opacity .2s; }
-    .nav-links a:hover { opacity: .4; }
-    .nav-tag { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey); border: 1px solid var(--mid); padding: 4px 10px; }
-
-    /* ── HERO ── */
-    .hero {
-      margin-top: 60px;
-      display: grid; grid-template-columns: 55% 45%;
-      height: calc(100vh - 60px);
-      min-height: 600px;
-    }
-    .hero-text {
-      background: var(--black); color: var(--white);
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 60px;
-    }
-    .hero-eyebrow { font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey); margin-bottom: 20px; }
-    .hero-h1 { font-size: clamp(52px, 7vw, 96px); font-weight: 900; line-height: .9; text-transform: uppercase; letter-spacing: -0.03em; margin-bottom: 28px; }
-    .hero-h1 em { font-style: normal; color: var(--accent); }
-    .hero-sub { font-size: 12px; line-height: 1.8; color: #666; max-width: 300px; }
-    .hero-img {
-      background: #111;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-    }
-    .hero-img::after {
-      content: 'SS 26';
-      position: absolute; bottom: 28px; right: 32px;
-      font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-      color: #333;
-    }
-
-    /* mugshot card */
-    .mugshot-card {
-      width: 240px;
-      border: 2px solid #2a2a2a;
-      background: #0e0e0e;
-      position: relative;
-    }
-    .mugshot-card-top {
-      padding: 10px 12px 0;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .mugshot-card-top span { font-size: 7.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #3a3a3a; }
-    .mugshot-body { padding: 16px 20px; display: flex; justify-content: center; position: relative; }
-    .mugshot-ruler {
-      position: absolute; right: 12px; top: 0; bottom: 0;
-      display: flex; flex-direction: column; justify-content: space-between;
-      padding: 8px 0;
-    }
-    .mugshot-ruler span { font-size: 7px; color: #2a2a2a; font-family: monospace; }
-    .mugshot-line {
-      border-top: 1px solid #1e1e1e;
-      margin: 0 12px 0;
-    }
-    .mugshot-id-bar {
-      padding: 8px 12px;
-      background: #080808;
-      display: flex; justify-content: space-between;
-    }
-    .mugshot-id-bar span { font-size: 7px; letter-spacing: 0.14em; color: #2a2a2a; font-family: monospace; }
-
-    /* ── TICKER ── */
-    .ticker {
-      border-bottom: 1.5px solid var(--black);
-      border-top: 1.5px solid var(--black);
-      padding: 13px 0; overflow: hidden; display: flex; gap: 0;
-    }
-    .ticker-inner { display: flex; gap: 48px; animation: tick 22s linear infinite; white-space: nowrap; }
-    @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-    .ticker-inner span { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey); }
-    .ticker-inner b { color: var(--black); font-weight: 700; }
-
-    /* ── SECTION HEAD ── */
-    .sec-head {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      padding: 72px 40px 28px;
-      border-bottom: 1.5px solid var(--black);
-    }
-    .sec-head h2 { font-size: clamp(32px, 5vw, 64px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.025em; line-height: 1; }
-    .sec-head .sec-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey); }
-
-    /* ── PRODUCT GRID ── */
-    .pgrid { display: grid; gap: 1.5px; background: var(--black); }
-    .pgrid-2 { grid-template-columns: 1fr 1fr; }
-    .pgrid-3 { grid-template-columns: 1fr 1fr 1fr; }
-    .pgrid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
-    .pgrid-a { grid-template-columns: 3fr 2fr; }
-    .pgrid-b { grid-template-columns: 2fr 3fr; }
-
-    .pcard {
-      background: var(--white);
-      display: flex; flex-direction: column;
-      position: relative; overflow: hidden;
-    }
-    .pcard-art {
-      flex: 1;
-      display: flex; align-items: center; justify-content: center;
-      padding: 40px 32px;
-      min-height: 280px;
-    }
-    .pcard-info {
-      padding: 16px 20px 18px;
-      border-top: 1px solid #e0ddd8;
-      display: flex; justify-content: space-between; align-items: flex-end;
-    }
-    .pcard-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
-    .pcard-detail { font-size: 9.5px; color: var(--grey); letter-spacing: 0.06em; margin-top: 3px; }
-    .pcard-num { font-size: 9px; color: var(--mid); font-family: monospace; letter-spacing: 0.08em; }
-
-    /* backgrounds */
-    .bg-white   { background: #f4f2ed; }
-    .bg-black   { background: #0c0c0c; }
-    .bg-slate   { background: #2b2f3a; }
-    .bg-olive   { background: #3c3b2c; }
-    .bg-rust    { background: #7a3220; }
-    .bg-sage    { background: #3d4f3d; }
-    .bg-ice     { background: #d2e2ef; }
-    .bg-lemon   { background: #d4d800; }
-    .bg-smoke   { background: #cccac4; }
-    .bg-coral   { background: #b85e3a; }
-    .bg-chalk   { background: #edeae4; }
-    .bg-night   { background: #10101c; }
-
-    /* invert text on dark cards */
-    .dark .pcard-info { border-top-color: #1e1e1e; }
-    .dark .pcard-name { color: #f4f2ed; }
-    .dark .pcard-detail { color: #444; }
-    .dark .pcard-num { color: #2a2a2a; }
-
-    /* ── SVG CLOTHING COLORS ── */
-    .c-white  { fill: #f0ede8; }
-    .c-black  { fill: #141414; }
-    .c-slate  { fill: #3d4252; }
-    .c-olive  { fill: #5a5840; }
-    .c-rust   { fill: #9a4230; }
-    .c-sage   { fill: #556655; }
-    .c-ice    { fill: #a8c8e0; }
-    .c-lemon  { fill: #c8cc00; }
-    .c-smoke  { fill: #a8a5a0; }
-    .c-coral  { fill: #c06040; }
-    .c-chalk  { fill: #e0ddd8; }
-    .c-night  { fill: #1c1c2e; }
-    .c-accent { fill: var(--accent); }
-
-    .logo-mark { fill: none; }
-    .logo-dog  { fill: #5c3a1e; }
-
-    /* ── BOARDS ── */
-    #boards { background: #0a0a0a; }
-    #boards .sec-head { border-bottom-color: #1c1c1c; }
-    #boards .sec-head h2 { color: #f4f2ed; }
-    #boards .sec-head .sec-label { color: #333; }
-
-    .boards-wrap { padding: 1.5px; background: #0a0a0a; }
-    .boards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5px; background: #111; }
-
-    .bcard {
-      background: #0e0e0e;
-      display: flex; flex-direction: column; align-items: center;
-      padding: 40px 20px 32px;
-      position: relative;
-    }
-    .bcard-tag {
-      position: absolute; top: 14px; right: 14px;
-      font-size: 7.5px; letter-spacing: 0.18em; text-transform: uppercase;
-      padding: 3px 7px; border: 1px solid;
-    }
-    .bcard-tag.sf { color: var(--sci); border-color: var(--sci); }
-    .bcard-tag.ir { color: var(--accent); border-color: var(--accent); }
-
-    /* board deck shape */
-    .deck-wrap { margin-bottom: 24px; filter: drop-shadow(0 16px 32px rgba(0,0,0,.8)); }
-
-    .bcard-name { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #e0e0e0; margin-bottom: 6px; text-align: center; }
-    .bcard-desc { font-size: 9.5px; color: #3a3a3a; letter-spacing: 0.06em; line-height: 1.6; text-align: center; }
-
-    /* ── ABOUT ── */
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; padding: 64px 40px; gap: 80px; }
-    .about-grid p { font-size: 13px; line-height: 1.9; color: #555; }
-    .about-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey); margin-bottom: 16px; }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--black); color: #2a2a2a;
-      padding: 48px 40px;
-      display: flex; justify-content: space-between; align-items: flex-end;
-      border-top: 1.5px solid #111;
-    }
-    .foot-left { display: flex; align-items: center; gap: 14px; }
-    .foot-left svg { width: 36px; height: 36px; }
-    .foot-brand { font-size: 9.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #3a3a3a; }
-    .foot-sub { font-size: 8.5px; color: #222; letter-spacing: 0.1em; margin-top: 3px; }
-    .foot-right { font-size: 8.5px; letter-spacing: 0.12em; color: #222; text-align: right; }
-
-    @media (max-width: 800px) {
-      nav { padding: 0 20px; }
-      .nav-links, .nav-tag { display: none; }
-      .hero { grid-template-columns: 1fr; }
-      .hero-text { padding: 40px 24px; }
-      .hero-img { height: 70vw; }
-      .sec-head { padding: 48px 20px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
-      .pgrid-2, .pgrid-3, .pgrid-4, .pgrid-a, .pgrid-b { grid-template-columns: 1fr; }
-      .boards-grid { grid-template-columns: 1fr 1fr; }
-      .about-grid { grid-template-columns: 1fr; padding: 40px 20px; gap: 32px; }
-      footer { flex-direction: column; gap: 24px; padding: 36px 20px; }
-      .foot-right { text-align: left; }
-    }
+    /* Product card hover */
+    .pcard:hover { transform: translateY(-2px); }
+    .pcard { transition: transform .25s ease; }
   </style>
 </head>
-<body>
+<body class="bg-sb-white text-sb-black font-sans overflow-x-hidden">
 
-<!-- NAV -->
-<nav>
-  <a class="nav-logo" href="#">
-    <!-- Inline dachshund mugshot logo mark -->
-    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<!-- ════════════ NAV ════════════ -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-sb-white border-b border-sb-black flex items-center justify-between px-6 md:px-10 h-[60px]">
+  <a href="#" class="flex items-center gap-3 no-underline">
+    <!-- Mugshot logo SVG -->
+    <svg class="w-8 h-8 flex-shrink-0" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="2" width="76" height="76" fill="none" stroke="#0c0c0c" stroke-width="2.5"/>
-      <!-- ruler ticks right -->
       <line x1="70" y1="18" x2="78" y2="18" stroke="#0c0c0c" stroke-width="1.2"/>
       <line x1="70" y1="30" x2="78" y2="30" stroke="#0c0c0c" stroke-width="1.2"/>
       <line x1="70" y1="42" x2="78" y2="42" stroke="#0c0c0c" stroke-width="1.2"/>
       <line x1="70" y1="54" x2="78" y2="54" stroke="#0c0c0c" stroke-width="1.2"/>
-      <!-- body -->
       <ellipse cx="38" cy="54" rx="26" ry="12" fill="#5c3a1e"/>
-      <!-- head -->
       <ellipse cx="38" cy="33" rx="14" ry="12" fill="#5c3a1e"/>
-      <!-- snout -->
       <ellipse cx="38" cy="40" rx="8" ry="6" fill="#7a4f2a"/>
-      <!-- ears -->
       <ellipse cx="25" cy="32" rx="6" ry="12" fill="#3e2210" transform="rotate(-10 25 32)"/>
       <ellipse cx="51" cy="32" rx="6" ry="12" fill="#3e2210" transform="rotate(10 51 32)"/>
-      <!-- eyes -->
       <circle cx="32" cy="30" r="2.5" fill="#0e0600"/>
       <circle cx="44" cy="30" r="2.5" fill="#0e0600"/>
-      <!-- nose -->
       <ellipse cx="38" cy="38" rx="3" ry="2" fill="#0e0600"/>
-      <!-- legs -->
       <rect x="20" y="62" width="5" height="10" rx="2.5" fill="#3e2210"/>
       <rect x="30" y="64" width="5" height="8" rx="2.5" fill="#3e2210"/>
       <rect x="41" y="64" width="5" height="8" rx="2.5" fill="#3e2210"/>
       <rect x="51" y="62" width="5" height="10" rx="2.5" fill="#3e2210"/>
     </svg>
-    <span class="nav-brand">SB Skate Collective</span>
+    <span class="text-[10px] font-bold tracking-[.22em] uppercase text-sb-black">SB Skate Collective</span>
   </a>
-  <ul class="nav-links">
-    <li><a href="#apparel">Apparel</a></li>
-    <li><a href="#boards">Boards</a></li>
-    <li><a href="#about">About</a></li>
+
+  <!-- Desktop links -->
+  <ul class="hidden md:flex gap-8 list-none">
+    <li><a href="#apparel" class="text-[10px] font-semibold tracking-[.18em] uppercase text-sb-black hover:opacity-40 transition-opacity no-underline">Apparel</a></li>
+    <li><a href="#boards" class="text-[10px] font-semibold tracking-[.18em] uppercase text-sb-black hover:opacity-40 transition-opacity no-underline">Boards</a></li>
+    <li><a href="#about" class="text-[10px] font-semibold tracking-[.18em] uppercase text-sb-black hover:opacity-40 transition-opacity no-underline">About</a></li>
   </ul>
-  <div class="nav-tag">Lookbook SS26</div>
+
+  <div class="hidden md:block text-[9px] tracking-[.18em] uppercase text-sb-grey border border-sb-mid px-3 py-1">Lookbook SS26</div>
+
+  <!-- Mobile hamburger -->
+  <button class="md:hidden p-2" @click="mobileMenu = !mobileMenu" aria-label="Menu">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path x-show="!mobileMenu" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      <path x-show="mobileMenu" x-cloak stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  </button>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-text">
-    <div class="hero-eyebrow">Santa Barbara, California — SS 2026</div>
-    <h1 class="hero-h1">Look<br/><em>Book</em></h1>
-    <p class="hero-sub">Clothing and boards. No rules, no checkout. Just look.</p>
+<!-- Mobile menu -->
+<div x-show="mobileMenu" x-cloak class="fixed top-[60px] left-0 right-0 z-40 bg-sb-white border-b border-sb-black px-6 py-6 flex flex-col gap-5">
+  <a href="#apparel" @click="mobileMenu=false" class="text-[11px] font-semibold tracking-[.18em] uppercase no-underline text-sb-black">Apparel</a>
+  <a href="#boards" @click="mobileMenu=false" class="text-[11px] font-semibold tracking-[.18em] uppercase no-underline text-sb-black">Boards</a>
+  <a href="#about" @click="mobileMenu=false" class="text-[11px] font-semibold tracking-[.18em] uppercase no-underline text-sb-black">About</a>
+</div>
+
+<!-- ════════════ HERO ════════════ -->
+<section class="mt-[60px] grid grid-cols-1 md:grid-cols-2 min-h-[calc(100vh-60px)]">
+
+  <!-- Left: text -->
+  <div class="bg-sb-black text-sb-white flex flex-col justify-end px-10 md:px-16 py-16 md:py-20">
+    <p class="text-[9px] tracking-[.28em] uppercase text-sb-grey mb-5">Santa Barbara, California — SS 2026</p>
+    <h1 class="text-[clamp(52px,8vw,96px)] font-black leading-[.88] uppercase tracking-tight mb-8">
+      Look<br/><span class="text-sb-accent">Book</span>
+    </h1>
+    <p class="text-[12px] leading-relaxed text-[#666] max-w-xs">Clothing and boards. No rules, no checkout. Just look.</p>
   </div>
-  <div class="hero-img">
-    <div class="mugshot-card">
-      <div class="mugshot-card-top">
-        <span>SB Skate Collective</span>
-        <span>No. 001</span>
+
+  <!-- Right: mugshot dachshund -->
+  <div class="bg-[#111] flex items-center justify-center relative min-h-[60vw] md:min-h-0">
+    <div class="border-2 border-[#2a2a2a] bg-[#0e0e0e] w-[240px]">
+      <div class="flex justify-between px-3 pt-2.5">
+        <span class="text-[7px] tracking-[.16em] uppercase text-[#3a3a3a] font-mono">SB Skate Collective</span>
+        <span class="text-[7px] tracking-[.12em] uppercase text-[#3a3a3a] font-mono">No. 001</span>
       </div>
-      <div class="mugshot-body">
-        <!-- Large mugshot dachshund SVG -->
+      <div class="px-5 py-4 relative flex justify-center">
         <svg width="190" height="230" viewBox="0 0 190 230" xmlns="http://www.w3.org/2000/svg">
-          <!-- wall lines behind -->
           <line x1="0" y1="60" x2="190" y2="60" stroke="#1a1a1a" stroke-width="1"/>
           <line x1="0" y1="90" x2="190" y2="90" stroke="#1a1a1a" stroke-width="1"/>
           <line x1="0" y1="120" x2="190" y2="120" stroke="#1a1a1a" stroke-width="1"/>
           <line x1="0" y1="150" x2="190" y2="150" stroke="#1a1a1a" stroke-width="1"/>
-          <!-- ruler right -->
           <rect x="164" y="50" width="26" height="160" fill="#141414"/>
           <text x="177" y="65" font-size="7" fill="#2a2a2a" text-anchor="middle" font-family="monospace">6'</text>
           <text x="177" y="95" font-size="7" fill="#2a2a2a" text-anchor="middle" font-family="monospace">5'</text>
@@ -322,1028 +131,889 @@
           <line x1="164" y1="90" x2="170" y2="90" stroke="#2a2a2a" stroke-width="1"/>
           <line x1="164" y1="120" x2="170" y2="120" stroke="#2a2a2a" stroke-width="1"/>
           <line x1="164" y1="150" x2="170" y2="150" stroke="#2a2a2a" stroke-width="1"/>
-          <!-- body (long boi) -->
           <ellipse cx="90" cy="155" rx="68" ry="28" fill="#5c3a1e"/>
-          <!-- underbelly -->
           <ellipse cx="90" cy="158" rx="52" ry="18" fill="#6e4828"/>
-          <!-- head -->
           <ellipse cx="90" cy="90" rx="38" ry="34" fill="#5c3a1e"/>
-          <!-- snout -->
           <ellipse cx="90" cy="108" rx="22" ry="16" fill="#7a4f2a"/>
-          <!-- left ear (droopy) -->
           <ellipse cx="56" cy="90" rx="15" ry="30" fill="#3e2210" transform="rotate(-14 56 90)"/>
-          <!-- right ear -->
           <ellipse cx="124" cy="90" rx="15" ry="30" fill="#3e2210" transform="rotate(14 124 90)"/>
-          <!-- eyes whites -->
           <ellipse cx="76" cy="84" rx="8" ry="7" fill="#e8e0d0"/>
           <ellipse cx="104" cy="84" rx="8" ry="7" fill="#e8e0d0"/>
-          <!-- pupils (looking deadpan forward) -->
           <circle cx="76" cy="86" r="4.5" fill="#0e0600"/>
           <circle cx="104" cy="86" r="4.5" fill="#0e0600"/>
-          <!-- eye glint -->
           <circle cx="74" cy="84" r="1.2" fill="#ffffff" opacity=".6"/>
           <circle cx="102" cy="84" r="1.2" fill="#ffffff" opacity=".6"/>
-          <!-- flat eyebrows (resigned) -->
           <path d="M 68 74 Q 76 71 84 73" fill="none" stroke="#3a1e08" stroke-width="2.2" stroke-linecap="round"/>
           <path d="M 96 73 Q 104 71 112 74" fill="none" stroke="#3a1e08" stroke-width="2.2" stroke-linecap="round"/>
-          <!-- nose -->
           <ellipse cx="90" cy="103" rx="7.5" ry="5.5" fill="#0e0600"/>
-          <!-- nostril highlights -->
           <circle cx="87" cy="102" r="1.5" fill="#1e0e00"/>
           <circle cx="93" cy="102" r="1.5" fill="#1e0e00"/>
-          <!-- mouth (flat line, unbothered) -->
           <path d="M 80 114 L 100 114" fill="none" stroke="#3a1e08" stroke-width="2" stroke-linecap="round"/>
-          <!-- tiny stubby legs -->
           <rect x="38" y="176" width="14" height="26" rx="7" fill="#3e2210"/>
           <rect x="62" y="180" width="14" height="22" rx="7" fill="#3e2210"/>
           <rect x="104" y="180" width="14" height="22" rx="7" fill="#3e2210"/>
           <rect x="128" y="176" width="14" height="26" rx="7" fill="#3e2210"/>
-          <!-- tail -->
           <path d="M 158 148 Q 172 136 168 122" fill="none" stroke="#5c3a1e" stroke-width="9" stroke-linecap="round"/>
         </svg>
-        <div class="mugshot-ruler">
-          <span>6'</span><span>5'</span><span>4'</span><span>3'</span><span>2'</span>
-        </div>
       </div>
-      <div class="mugshot-line"></div>
-      <div class="mugshot-id-bar">
-        <span>SBSKCO — SS26</span>
-        <span>DETAINED</span>
+      <div class="border-t border-[#1e1e1e] mx-3"></div>
+      <div class="flex justify-between px-3 py-2 bg-[#080808]">
+        <span class="text-[7px] tracking-[.14em] text-[#2a2a2a] font-mono">SBSKCO — SS26</span>
+        <span class="text-[7px] tracking-[.14em] text-[#2a2a2a] font-mono">DETAINED</span>
       </div>
     </div>
+    <span class="absolute bottom-7 right-8 text-[9px] tracking-[.18em] uppercase text-[#333] [writing-mode:vertical-lr]">Scroll ↓</span>
   </div>
 </section>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-inner">
-    <span>SB Skate Collective</span><b>·</b>
-    <span>Apparel</span><b>·</b>
-    <span>Boards</span><b>·</b>
-    <span>SS 2026</span><b>·</b>
-    <span>Santa Barbara</span><b>·</b>
-    <span>Lookbook</span><b>·</b>
-    <span>Tees</span><b>·</b>
-    <span>Pants</span><b>·</b>
-    <span>Decks</span><b>·</b>
-    <span>SB Skate Collective</span><b>·</b>
-    <span>Apparel</span><b>·</b>
-    <span>Boards</span><b>·</b>
-    <span>SS 2026</span><b>·</b>
-    <span>Santa Barbara</span><b>·</b>
-    <span>Lookbook</span><b>·</b>
-    <span>Tees</span><b>·</b>
-    <span>Pants</span><b>·</b>
-    <span>Decks</span><b>·</b>
+<!-- ════════════ TICKER ════════════ -->
+<div class="border-y border-sb-black overflow-hidden py-3">
+  <div class="ticker-track flex gap-12 whitespace-nowrap w-max">
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">SB Skate Collective</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Apparel</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Boards</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">SS 2026</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Santa Barbara</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Lookbook</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Tees</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Pants</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Decks</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">SB Skate Collective</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Apparel</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Boards</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">SS 2026</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Santa Barbara</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Lookbook</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Tees</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Pants</span><b class="text-[9px] text-sb-black">·</b>
+    <span class="text-[9.5px] tracking-[.2em] uppercase text-sb-grey">Decks</span><b class="text-[9px] text-sb-black">·</b>
   </div>
 </div>
 
-<!-- ═══════════════════════════ APPAREL ═══════════════════════════ -->
+<!-- ════════════ APPAREL ════════════ -->
 <section id="apparel">
-  <div class="sec-head">
-    <h2>Apparel</h2>
-    <span class="sec-label">SS 26 Collection</span>
+  <div class="flex items-end justify-between px-6 md:px-10 pt-16 pb-7 border-b border-sb-black">
+    <h2 class="text-[clamp(32px,5vw,64px)] font-black uppercase tracking-tight leading-none">Apparel</h2>
+    <span class="text-[9px] tracking-[.2em] uppercase text-sb-grey">SS 26 Collection</span>
   </div>
 
-  <!-- TEES — 3 col -->
-  <div class="pgrid pgrid-3">
+  <!-- TEES: 3 col -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-sb-black">
 
-    <!-- Tee 1: Black -->
-    <div class="pcard bg-black dark">
-      <div class="pcard-art">
+    <!-- Tee: Void (black) -->
+    <div class="pcard bg-[#111] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[300px]">
         <svg width="180" height="200" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg">
-          <!-- Tee silhouette -->
-          <path d="M 50 20 L 20 50 L 40 60 L 40 180 L 140 180 L 140 60 L 160 50 L 130 20 Q 110 5 90 8 Q 70 5 50 20 Z" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
-          <!-- collar -->
-          <path d="M 70 20 Q 90 32 110 20" fill="none" stroke="#2a2a2a" stroke-width="1.5"/>
-          <!-- center logo -->
-          <g transform="translate(76, 75) scale(0.32)">
-            <!-- small mugshot dachshund centered -->
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#3a3a3a" stroke-width="3"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#3a3a3a"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#3a3a3a"/>
-            <ellipse cx="44" cy="43" rx="8.5" ry="6.5" fill="#444"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#2a2a2a" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#2a2a2a" transform="rotate(12 58 35)"/>
-            <circle cx="37" cy="33" r="3" fill="#111"/>
-            <circle cx="51" cy="33" r="3" fill="#111"/>
-            <ellipse cx="44" cy="41" rx="3" ry="2" fill="#111"/>
-            <rect x="22" y="65" width="5" height="10" rx="2.5" fill="#2a2a2a"/>
-            <rect x="32" y="67" width="5" height="8" rx="2.5" fill="#2a2a2a"/>
-            <rect x="51" y="67" width="5" height="8" rx="2.5" fill="#2a2a2a"/>
-            <rect x="61" y="65" width="5" height="10" rx="2.5" fill="#2a2a2a"/>
+          <path d="M 50 20 L 20 50 L 40 60 L 40 180 L 140 180 L 140 60 L 160 50 L 130 20 Q 110 5 90 8 Q 70 5 50 20 Z" fill="#1c1c1c" stroke="#2c2c2c" stroke-width="1.5"/>
+          <path d="M 70 20 Q 90 32 110 20" fill="none" stroke="#2c2c2c" stroke-width="1.5"/>
+          <line x1="40" y1="60" x2="40" y2="180" stroke="#252525" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <line x1="140" y1="60" x2="140" y2="180" stroke="#252525" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <g transform="translate(74,72) scale(0.34)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#3a3a3a" stroke-width="3"/>
+            <line x1="82" y1="18" x2="92" y2="18" stroke="#3a3a3a" stroke-width="1"/>
+            <line x1="82" y1="36" x2="92" y2="36" stroke="#3a3a3a" stroke-width="1"/>
+            <line x1="82" y1="55" x2="92" y2="55" stroke="#3a3a3a" stroke-width="1"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#3a3a3a"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#3a3a3a"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#454545"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#2a2a2a" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#2a2a2a" transform="rotate(12 61 37)"/>
+            <ellipse cx="38" cy="35" rx="4.5" ry="4" fill="#e8e0d0"/>
+            <ellipse cx="54" cy="35" rx="4.5" ry="4" fill="#e8e0d0"/>
+            <circle cx="38" cy="36" r="2.8" fill="#0e0600"/>
+            <circle cx="54" cy="36" r="2.8" fill="#0e0600"/>
+            <ellipse cx="46" cy="43" rx="3" ry="2.2" fill="#0e0600"/>
+            <path d="M 38 50 L 54 50" fill="none" stroke="#2a2a2a" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="23" y="70" width="6" height="13" rx="3" fill="#2a2a2a"/>
+            <rect x="34" y="73" width="6" height="10" rx="3" fill="#2a2a2a"/>
+            <rect x="56" y="73" width="6" height="10" rx="3" fill="#2a2a2a"/>
+            <rect x="67" y="70" width="6" height="13" rx="3" fill="#2a2a2a"/>
           </g>
-          <!-- seams -->
-          <line x1="40" y1="60" x2="40" y2="180" stroke="#222" stroke-width="0.5" stroke-dasharray="4,4"/>
-          <line x1="140" y1="60" x2="140" y2="180" stroke="#222" stroke-width="0.5" stroke-dasharray="4,4"/>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#1e1e1e]">
         <div>
-          <div class="pcard-name">Mugshot Tee — Void</div>
-          <div class="pcard-detail">100% Cotton Boxy · S–XL</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em] text-sb-white">Mugshot Tee — Void</p>
+          <p class="text-[9.5px] text-[#444] tracking-[.06em] mt-0.5">100% Cotton Boxy · S–XL</p>
         </div>
-        <div class="pcard-num">001</div>
+        <span class="text-[9px] text-[#2a2a2a] font-mono">001</span>
       </div>
     </div>
 
-    <!-- Tee 2: White/Bone -->
-    <div class="pcard bg-chalk">
-      <div class="pcard-art">
+    <!-- Tee: Bone -->
+    <div class="pcard bg-[#edeae4] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[300px]">
         <svg width="180" height="200" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 50 20 L 20 50 L 40 60 L 40 180 L 140 180 L 140 60 L 160 50 L 130 20 Q 110 5 90 8 Q 70 5 50 20 Z" fill="#e8e4de" stroke="#ccc" stroke-width="1.5"/>
-          <path d="M 70 20 Q 90 32 110 20" fill="none" stroke="#ccc" stroke-width="1.5"/>
-          <!-- center logo on light tee: dark ink -->
-          <g transform="translate(76, 75) scale(0.32)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#555" stroke-width="3"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#555"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#555"/>
-            <ellipse cx="44" cy="43" rx="8.5" ry="6.5" fill="#666"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#444" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#444" transform="rotate(12 58 35)"/>
-            <circle cx="37" cy="33" r="3" fill="#222"/>
-            <circle cx="51" cy="33" r="3" fill="#222"/>
-            <ellipse cx="44" cy="41" rx="3" ry="2" fill="#222"/>
-            <rect x="22" y="65" width="5" height="10" rx="2.5" fill="#444"/>
-            <rect x="32" y="67" width="5" height="8" rx="2.5" fill="#444"/>
-            <rect x="51" y="67" width="5" height="8" rx="2.5" fill="#444"/>
-            <rect x="61" y="65" width="5" height="10" rx="2.5" fill="#444"/>
+          <path d="M 50 20 L 20 50 L 40 60 L 40 180 L 140 180 L 140 60 L 160 50 L 130 20 Q 110 5 90 8 Q 70 5 50 20 Z" fill="#e4e0da" stroke="#c8c5be" stroke-width="1.5"/>
+          <path d="M 70 20 Q 90 32 110 20" fill="none" stroke="#c8c5be" stroke-width="1.5"/>
+          <line x1="40" y1="60" x2="40" y2="180" stroke="#c0bdb8" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <line x1="140" y1="60" x2="140" y2="180" stroke="#c0bdb8" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <g transform="translate(74,72) scale(0.34)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#666" stroke-width="3"/>
+            <line x1="82" y1="18" x2="92" y2="18" stroke="#666" stroke-width="1"/>
+            <line x1="82" y1="36" x2="92" y2="36" stroke="#666" stroke-width="1"/>
+            <line x1="82" y1="55" x2="92" y2="55" stroke="#666" stroke-width="1"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#666"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#666"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#777"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#555" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#555" transform="rotate(12 61 37)"/>
+            <ellipse cx="38" cy="35" rx="4.5" ry="4" fill="#e8e0d0"/>
+            <ellipse cx="54" cy="35" rx="4.5" ry="4" fill="#e8e0d0"/>
+            <circle cx="38" cy="36" r="2.8" fill="#111"/>
+            <circle cx="54" cy="36" r="2.8" fill="#111"/>
+            <ellipse cx="46" cy="43" rx="3" ry="2.2" fill="#111"/>
+            <path d="M 38 50 L 54 50" fill="none" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="23" y="70" width="6" height="13" rx="3" fill="#555"/>
+            <rect x="34" y="73" width="6" height="10" rx="3" fill="#555"/>
+            <rect x="56" y="73" width="6" height="10" rx="3" fill="#555"/>
+            <rect x="67" y="70" width="6" height="13" rx="3" fill="#555"/>
           </g>
-          <line x1="40" y1="60" x2="40" y2="180" stroke="#bbb" stroke-width="0.5" stroke-dasharray="4,4"/>
-          <line x1="140" y1="60" x2="140" y2="180" stroke="#bbb" stroke-width="0.5" stroke-dasharray="4,4"/>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#d8d5cf]">
         <div>
-          <div class="pcard-name">Mugshot Tee — Bone</div>
-          <div class="pcard-detail">100% Cotton Boxy · S–XL</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em]">Mugshot Tee — Bone</p>
+          <p class="text-[9.5px] text-sb-grey tracking-[.06em] mt-0.5">100% Cotton Boxy · S–XL</p>
         </div>
-        <div class="pcard-num">002</div>
+        <span class="text-[9px] text-sb-mid font-mono">002</span>
       </div>
     </div>
 
-    <!-- Tee 3: Slate -->
-    <div class="pcard bg-slate dark">
-      <div class="pcard-art">
+    <!-- Tee: Slate -->
+    <div class="pcard bg-[#2b2f3a] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[300px]">
         <svg width="180" height="200" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 50 20 L 20 50 L 40 60 L 40 180 L 140 180 L 140 60 L 160 50 L 130 20 Q 110 5 90 8 Q 70 5 50 20 Z" fill="#3d4252" stroke="#4a5060" stroke-width="1.5"/>
-          <path d="M 70 20 Q 90 32 110 20" fill="none" stroke="#4a5060" stroke-width="1.5"/>
-          <g transform="translate(76, 75) scale(0.32)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#5a6070" stroke-width="3"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#5a6070"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#5a6070"/>
-            <ellipse cx="44" cy="43" rx="8.5" ry="6.5" fill="#666"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#4a5060" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#4a5060" transform="rotate(12 58 35)"/>
-            <circle cx="37" cy="33" r="3" fill="#1a1a2a"/>
-            <circle cx="51" cy="33" r="3" fill="#1a1a2a"/>
-            <ellipse cx="44" cy="41" rx="3" ry="2" fill="#1a1a2a"/>
-            <rect x="22" y="65" width="5" height="10" rx="2.5" fill="#4a5060"/>
-            <rect x="32" y="67" width="5" height="8" rx="2.5" fill="#4a5060"/>
-            <rect x="51" y="67" width="5" height="8" rx="2.5" fill="#4a5060"/>
-            <rect x="61" y="65" width="5" height="10" rx="2.5" fill="#4a5060"/>
+          <path d="M 50 20 L 20 50 L 40 60 L 40 180 L 140 180 L 140 60 L 160 50 L 130 20 Q 110 5 90 8 Q 70 5 50 20 Z" fill="#363b48" stroke="#444c5c" stroke-width="1.5"/>
+          <path d="M 70 20 Q 90 32 110 20" fill="none" stroke="#444c5c" stroke-width="1.5"/>
+          <line x1="40" y1="60" x2="40" y2="180" stroke="#3a4252" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <line x1="140" y1="60" x2="140" y2="180" stroke="#3a4252" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <g transform="translate(74,72) scale(0.34)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#5a6575" stroke-width="3"/>
+            <line x1="82" y1="18" x2="92" y2="18" stroke="#5a6575" stroke-width="1"/>
+            <line x1="82" y1="36" x2="92" y2="36" stroke="#5a6575" stroke-width="1"/>
+            <line x1="82" y1="55" x2="92" y2="55" stroke="#5a6575" stroke-width="1"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#5a6575"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#5a6575"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#6a7585"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#4a5565" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#4a5565" transform="rotate(12 61 37)"/>
+            <ellipse cx="38" cy="35" rx="4.5" ry="4" fill="#e8e0d0"/>
+            <ellipse cx="54" cy="35" rx="4.5" ry="4" fill="#e8e0d0"/>
+            <circle cx="38" cy="36" r="2.8" fill="#0e0e18"/>
+            <circle cx="54" cy="36" r="2.8" fill="#0e0e18"/>
+            <ellipse cx="46" cy="43" rx="3" ry="2.2" fill="#0e0e18"/>
+            <path d="M 38 50 L 54 50" fill="none" stroke="#4a5565" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="23" y="70" width="6" height="13" rx="3" fill="#4a5565"/>
+            <rect x="34" y="73" width="6" height="10" rx="3" fill="#4a5565"/>
+            <rect x="56" y="73" width="6" height="10" rx="3" fill="#4a5565"/>
+            <rect x="67" y="70" width="6" height="13" rx="3" fill="#4a5565"/>
           </g>
-          <line x1="40" y1="60" x2="40" y2="180" stroke="#4a5060" stroke-width="0.5" stroke-dasharray="4,4"/>
-          <line x1="140" y1="60" x2="140" y2="180" stroke="#4a5060" stroke-width="0.5" stroke-dasharray="4,4"/>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#1e222a]">
         <div>
-          <div class="pcard-name">Mugshot Tee — Slate</div>
-          <div class="pcard-detail">100% Cotton Boxy · S–XL</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em] text-sb-white">Mugshot Tee — Slate</p>
+          <p class="text-[9.5px] text-[#444] tracking-[.06em] mt-0.5">100% Cotton Boxy · S–XL</p>
         </div>
-        <div class="pcard-num">003</div>
+        <span class="text-[9px] text-[#2a2a2a] font-mono">003</span>
       </div>
     </div>
   </div>
 
-  <!-- BUTTON DOWNS — 2 col -->
-  <div class="pgrid pgrid-2">
+  <!-- BUTTON DOWNS: 2 col -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-sb-black mt-px">
 
-    <!-- Button Down 1: Olive -->
-    <div class="pcard bg-olive dark">
-      <div class="pcard-art" style="min-height:320px;">
+    <!-- Button Down: Olive -->
+    <div class="pcard bg-[#3c3b2c] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[340px]">
         <svg width="200" height="240" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-          <!-- camp collar button down -->
-          <path d="M 55 18 L 22 55 L 42 64 L 42 220 L 158 220 L 158 64 L 178 55 L 145 18 L 115 10 L 100 28 L 85 10 Z" fill="#4a4c38" stroke="#5a5c48" stroke-width="1.5"/>
-          <!-- camp collar shape -->
-          <path d="M 85 10 L 75 30 L 100 42 L 125 30 L 115 10" fill="#565840" stroke="#666840" stroke-width="1"/>
-          <!-- button placket center -->
-          <line x1="100" y1="42" x2="100" y2="220" stroke="#5a5c48" stroke-width="1.5"/>
-          <!-- buttons -->
-          <circle cx="100" cy="60" r="3" fill="#6a6c58"/>
-          <circle cx="100" cy="80" r="3" fill="#6a6c58"/>
-          <circle cx="100" cy="100" r="3" fill="#6a6c58"/>
-          <circle cx="100" cy="120" r="3" fill="#6a6c58"/>
-          <circle cx="100" cy="140" r="3" fill="#6a6c58"/>
-          <!-- breast pocket -->
-          <rect x="56" y="80" width="28" height="24" rx="1" fill="none" stroke="#5a5c48" stroke-width="1"/>
-          <!-- small logo on pocket -->
-          <g transform="translate(63, 86) scale(0.14)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#6a6c58" stroke-width="4"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#6a6c58"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#6a6c58"/>
-            <ellipse cx="44" cy="43" rx="8.5" ry="6.5" fill="#7a7c68"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#5a5c48" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#5a5c48" transform="rotate(12 58 35)"/>
-            <circle cx="37" cy="33" r="3" fill="#1a1c08"/>
-            <circle cx="51" cy="33" r="3" fill="#1a1c08"/>
+          <path d="M 55 18 L 22 55 L 42 64 L 42 220 L 158 220 L 158 64 L 178 55 L 145 18 L 115 10 L 100 28 L 85 10 Z" fill="#4a4a34" stroke="#5a5a44" stroke-width="1.5"/>
+          <path d="M 85 10 L 75 30 L 100 42 L 125 30 L 115 10" fill="#545444" stroke="#646454" stroke-width="1"/>
+          <line x1="100" y1="42" x2="100" y2="220" stroke="#5a5a44" stroke-width="1.5"/>
+          <circle cx="100" cy="62" r="3" fill="#6a6a54"/>
+          <circle cx="100" cy="82" r="3" fill="#6a6a54"/>
+          <circle cx="100" cy="102" r="3" fill="#6a6a54"/>
+          <circle cx="100" cy="122" r="3" fill="#6a6a54"/>
+          <circle cx="100" cy="142" r="3" fill="#6a6a54"/>
+          <rect x="56" y="82" width="28" height="24" rx="1" fill="none" stroke="#5a5a44" stroke-width="1"/>
+          <g transform="translate(63, 88) scale(0.15)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#7a7a64" stroke-width="4"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#7a7a64"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#7a7a64"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#8a8a74"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#6a6a54" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#6a6a54" transform="rotate(12 61 37)"/>
+            <circle cx="38" cy="36" r="3" fill="#1a1a04"/>
+            <circle cx="54" cy="36" r="3" fill="#1a1a04"/>
           </g>
-          <!-- side seams -->
-          <line x1="42" y1="64" x2="42" y2="220" stroke="#555840" stroke-width="0.5" stroke-dasharray="4,4"/>
-          <line x1="158" y1="64" x2="158" y2="220" stroke="#555840" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <line x1="42" y1="64" x2="42" y2="220" stroke="#4a4a34" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <line x1="158" y1="64" x2="158" y2="220" stroke="#4a4a34" stroke-width="0.5" stroke-dasharray="4,4"/>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#2a2a1a]">
         <div>
-          <div class="pcard-name">Button Down — Field</div>
-          <div class="pcard-detail">Woven Cotton · Camp Collar · Relaxed</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em] text-sb-white">Button Down — Field</p>
+          <p class="text-[9.5px] text-[#555] tracking-[.06em] mt-0.5">Woven Cotton · Camp Collar · Relaxed</p>
         </div>
-        <div class="pcard-num">004</div>
+        <span class="text-[9px] text-[#2a2a1a] font-mono">004</span>
       </div>
     </div>
 
-    <!-- Button Down 2: Night -->
-    <div class="pcard bg-night dark">
-      <div class="pcard-art" style="min-height:320px;">
+    <!-- Button Down: Blackout -->
+    <div class="pcard bg-[#10101c] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[340px]">
         <svg width="200" height="240" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 55 18 L 22 55 L 42 64 L 42 220 L 158 220 L 158 64 L 178 55 L 145 18 L 115 10 L 100 28 L 85 10 Z" fill="#1a1a2a" stroke="#2a2a3c" stroke-width="1.5"/>
-          <path d="M 85 10 L 75 30 L 100 42 L 125 30 L 115 10" fill="#1e1e30" stroke="#2e2e42" stroke-width="1"/>
-          <line x1="100" y1="42" x2="100" y2="220" stroke="#2a2a3c" stroke-width="1.5"/>
-          <circle cx="100" cy="60" r="3" fill="#3a3a4c"/>
-          <circle cx="100" cy="80" r="3" fill="#3a3a4c"/>
-          <circle cx="100" cy="100" r="3" fill="#3a3a4c"/>
-          <circle cx="100" cy="120" r="3" fill="#3a3a4c"/>
-          <circle cx="100" cy="140" r="3" fill="#3a3a4c"/>
-          <rect x="56" y="80" width="28" height="24" rx="1" fill="none" stroke="#2a2a3c" stroke-width="1"/>
-          <g transform="translate(63, 86) scale(0.14)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#3a3a4c" stroke-width="4"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#3a3a4c"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#3a3a4c"/>
-            <ellipse cx="44" cy="43" rx="8.5" ry="6.5" fill="#4a4a5c"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#2a2a3c" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#2a2a3c" transform="rotate(12 58 35)"/>
-            <circle cx="37" cy="33" r="3" fill="#0a0a10"/>
-            <circle cx="51" cy="33" r="3" fill="#0a0a10"/>
+          <path d="M 55 18 L 22 55 L 42 64 L 42 220 L 158 220 L 158 64 L 178 55 L 145 18 L 115 10 L 100 28 L 85 10 Z" fill="#1a1a2c" stroke="#2a2a3e" stroke-width="1.5"/>
+          <path d="M 85 10 L 75 30 L 100 42 L 125 30 L 115 10" fill="#1e1e32" stroke="#2e2e42" stroke-width="1"/>
+          <line x1="100" y1="42" x2="100" y2="220" stroke="#2a2a3e" stroke-width="1.5"/>
+          <circle cx="100" cy="62" r="3" fill="#3a3a50"/>
+          <circle cx="100" cy="82" r="3" fill="#3a3a50"/>
+          <circle cx="100" cy="102" r="3" fill="#3a3a50"/>
+          <circle cx="100" cy="122" r="3" fill="#3a3a50"/>
+          <circle cx="100" cy="142" r="3" fill="#3a3a50"/>
+          <rect x="56" y="82" width="28" height="24" rx="1" fill="none" stroke="#2a2a3e" stroke-width="1"/>
+          <g transform="translate(63, 88) scale(0.15)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#3a3a50" stroke-width="4"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#3a3a50"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#3a3a50"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#4a4a60"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#2a2a40" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#2a2a40" transform="rotate(12 61 37)"/>
+            <circle cx="38" cy="36" r="3" fill="#0a0a14"/>
+            <circle cx="54" cy="36" r="3" fill="#0a0a14"/>
           </g>
-          <line x1="42" y1="64" x2="42" y2="220" stroke="#22223a" stroke-width="0.5" stroke-dasharray="4,4"/>
-          <line x1="158" y1="64" x2="158" y2="220" stroke="#22223a" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <line x1="42" y1="64" x2="42" y2="220" stroke="#18182a" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <line x1="158" y1="64" x2="158" y2="220" stroke="#18182a" stroke-width="0.5" stroke-dasharray="4,4"/>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#1a1a2a]">
         <div>
-          <div class="pcard-name">Button Down — Blackout</div>
-          <div class="pcard-detail">Woven Cotton · Camp Collar · Relaxed</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em] text-sb-white">Button Down — Blackout</p>
+          <p class="text-[9.5px] text-[#444] tracking-[.06em] mt-0.5">Woven Cotton · Camp Collar · Relaxed</p>
         </div>
-        <div class="pcard-num">005</div>
+        <span class="text-[9px] text-[#2a2a2a] font-mono">005</span>
       </div>
     </div>
   </div>
 
-  <!-- SWEATSHIRTS — asymmetric -->
-  <div class="pgrid pgrid-a">
+  <!-- SWEATSHIRTS: 2 col -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-sb-black mt-px">
 
-    <!-- Sweatshirt: Rust (large) -->
-    <div class="pcard bg-rust dark">
-      <div class="pcard-art" style="min-height:340px;">
+    <!-- Sweat: Rust -->
+    <div class="pcard bg-[#7a3220] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[360px]">
         <svg width="220" height="250" viewBox="0 0 220 250" xmlns="http://www.w3.org/2000/svg">
-          <!-- crew neck sweatshirt -->
-          <path d="M 60 22 L 22 68 L 48 78 L 48 230 L 172 230 L 172 78 L 198 68 L 160 22 Q 138 8 110 10 Q 82 8 60 22 Z" fill="#8a3a22" stroke="#9a4a32" stroke-width="1.5"/>
-          <!-- crew neckline -->
-          <path d="M 78 22 Q 110 36 142 22" fill="none" stroke="#9a4a32" stroke-width="1.5"/>
-          <!-- ribbed cuffs hint -->
-          <rect x="48" y="215" width="124" height="15" rx="0" fill="#7a2a12" stroke="#8a3a22" stroke-width="0.5"/>
-          <!-- center large logo -->
-          <g transform="translate(72, 82) scale(0.56)">
-            <rect x="0" y="0" width="120" height="120" fill="none" stroke="#9a4a32" stroke-width="4"/>
-            <!-- ruler ticks -->
-            <line x1="112" y1="24" x2="120" y2="24" stroke="#9a4a32" stroke-width="1.5"/>
-            <line x1="112" y1="48" x2="120" y2="48" stroke="#9a4a32" stroke-width="1.5"/>
-            <line x1="112" y1="72" x2="120" y2="72" stroke="#9a4a32" stroke-width="1.5"/>
-            <line x1="112" y1="96" x2="120" y2="96" stroke="#9a4a32" stroke-width="1.5"/>
-            <!-- dog body -->
-            <ellipse cx="58" cy="82" rx="40" ry="18" fill="#9a4a32"/>
-            <ellipse cx="58" cy="48" rx="22" ry="20" fill="#9a4a32"/>
-            <ellipse cx="58" cy="60" rx="13" ry="10" fill="#aa5a42"/>
-            <ellipse cx="40" cy="47" rx="9" ry="18" fill="#8a3a22" transform="rotate(-12 40 47)"/>
-            <ellipse cx="76" cy="47" rx="9" ry="18" fill="#8a3a22" transform="rotate(12 76 47)"/>
-            <ellipse cx="50" cy="44" rx="5" ry="4.5" fill="#e8d8c8"/>
-            <ellipse cx="66" cy="44" rx="5" ry="4.5" fill="#e8d8c8"/>
-            <circle cx="50" cy="46" r="3" fill="#1a0a00"/>
-            <circle cx="66" cy="46" r="3" fill="#1a0a00"/>
-            <ellipse cx="58" cy="57" rx="4.5" ry="3.5" fill="#1a0a00"/>
-            <path d="M 50 65 L 66 65" fill="none" stroke="#8a3a22" stroke-width="2" stroke-linecap="round"/>
-            <rect x="32" y="96" width="8" height="16" rx="4" fill="#8a3a22"/>
-            <rect x="46" y="99" width="8" height="13" rx="4" fill="#8a3a22"/>
-            <rect x="64" y="99" width="8" height="13" rx="4" fill="#8a3a22"/>
-            <rect x="78" y="96" width="8" height="16" rx="4" fill="#8a3a22"/>
+          <path d="M 60 22 L 22 68 L 48 78 L 48 230 L 172 230 L 172 78 L 198 68 L 160 22 Q 138 8 110 10 Q 82 8 60 22 Z" fill="#8a3a28" stroke="#9a4a38" stroke-width="1.5"/>
+          <path d="M 78 22 Q 110 36 142 22" fill="none" stroke="#9a4a38" stroke-width="1.5"/>
+          <rect x="48" y="216" width="124" height="14" rx="0" fill="#6a2a18" stroke="#7a3220" stroke-width="0.5"/>
+          <g transform="translate(70, 80) scale(0.58)">
+            <rect x="0" y="0" width="120" height="120" fill="none" stroke="#9a4a38" stroke-width="4"/>
+            <line x1="112" y1="24" x2="120" y2="24" stroke="#9a4a38" stroke-width="1.5"/>
+            <line x1="112" y1="48" x2="120" y2="48" stroke="#9a4a38" stroke-width="1.5"/>
+            <line x1="112" y1="72" x2="120" y2="72" stroke="#9a4a38" stroke-width="1.5"/>
+            <line x1="112" y1="96" x2="120" y2="96" stroke="#9a4a38" stroke-width="1.5"/>
+            <ellipse cx="60" cy="82" rx="40" ry="18" fill="#9a4a38"/>
+            <ellipse cx="60" cy="48" rx="22" ry="20" fill="#9a4a38"/>
+            <ellipse cx="60" cy="60" rx="13" ry="10" fill="#aa5a48"/>
+            <ellipse cx="41" cy="47" rx="9" ry="18" fill="#8a3a28" transform="rotate(-12 41 47)"/>
+            <ellipse cx="79" cy="47" rx="9" ry="18" fill="#8a3a28" transform="rotate(12 79 47)"/>
+            <ellipse cx="51" cy="44" rx="5.5" ry="5" fill="#e8d8c8"/>
+            <ellipse cx="69" cy="44" rx="5.5" ry="5" fill="#e8d8c8"/>
+            <circle cx="51" cy="46" r="3.5" fill="#1a0a00"/>
+            <circle cx="69" cy="46" r="3.5" fill="#1a0a00"/>
+            <ellipse cx="60" cy="57" rx="4.5" ry="3.5" fill="#1a0a00"/>
+            <path d="M 51 65 L 69 65" fill="none" stroke="#8a3a28" stroke-width="2" stroke-linecap="round"/>
+            <rect x="32" y="97" width="9" height="16" rx="4.5" fill="#8a3a28"/>
+            <rect x="47" y="100" width="9" height="13" rx="4.5" fill="#8a3a28"/>
+            <rect x="64" y="100" width="9" height="13" rx="4.5" fill="#8a3a28"/>
+            <rect x="79" y="97" width="9" height="16" rx="4.5" fill="#8a3a28"/>
           </g>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#5a2210]">
         <div>
-          <div class="pcard-name">Crew Sweat — Rust</div>
-          <div class="pcard-detail">Heavy 420gsm Fleece · Boxy · S–XL</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em] text-sb-white">Crew Sweat — Rust</p>
+          <p class="text-[9.5px] text-[#555] tracking-[.06em] mt-0.5">Heavy 420gsm Fleece · Boxy · S–XL</p>
         </div>
-        <div class="pcard-num">006</div>
+        <span class="text-[9px] text-[#3a1208] font-mono">006</span>
       </div>
     </div>
 
-    <!-- Sweatshirt: Chalk (small) -->
-    <div class="pcard bg-smoke">
-      <div class="pcard-art" style="min-height:340px;">
-        <svg width="180" height="200" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 48 18 L 18 54 L 38 63 L 38 185 L 142 185 L 142 63 L 162 54 L 132 18 Q 112 6 90 8 Q 68 6 48 18 Z" fill="#d0cdc8" stroke="#bbb" stroke-width="1.5"/>
-          <path d="M 64 18 Q 90 30 116 18" fill="none" stroke="#bbb" stroke-width="1.5"/>
-          <rect x="38" y="172" width="104" height="13" rx="0" fill="#c0bdb8" stroke="#bbb" stroke-width="0.5"/>
-          <!-- center logo dark ink -->
-          <g transform="translate(57, 62) scale(0.38)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#666" stroke-width="3"/>
-            <line x1="80" y1="18" x2="88" y2="18" stroke="#666" stroke-width="1"/>
-            <line x1="80" y1="36" x2="88" y2="36" stroke="#666" stroke-width="1"/>
-            <line x1="80" y1="54" x2="88" y2="54" stroke="#666" stroke-width="1"/>
-            <ellipse cx="44" cy="58" rx="28" ry="12" fill="#666"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#666"/>
-            <ellipse cx="44" cy="44" rx="9" ry="7" fill="#777"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#555" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#555" transform="rotate(12 58 35)"/>
-            <ellipse cx="37" cy="33" rx="4" ry="3.5" fill="#eee"/>
-            <ellipse cx="51" cy="33" rx="4" ry="3.5" fill="#eee"/>
-            <circle cx="37" cy="34" r="2.5" fill="#111"/>
-            <circle cx="51" cy="34" r="2.5" fill="#111"/>
-            <ellipse cx="44" cy="41" rx="3" ry="2" fill="#111"/>
-            <rect x="22" y="67" width="5" height="10" rx="2.5" fill="#555"/>
-            <rect x="32" y="69" width="5" height="8" rx="2.5" fill="#555"/>
-            <rect x="51" y="69" width="5" height="8" rx="2.5" fill="#555"/>
-            <rect x="61" y="67" width="5" height="10" rx="2.5" fill="#555"/>
+    <!-- Sweat: Ash -->
+    <div class="pcard bg-[#cccac4] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[360px]">
+        <svg width="200" height="230" viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 56 20 L 20 62 L 44 72 L 44 212 L 156 212 L 156 72 L 180 62 L 144 20 Q 124 7 100 9 Q 76 7 56 20 Z" fill="#d8d6d0" stroke="#b8b6b0" stroke-width="1.5"/>
+          <path d="M 73 20 Q 100 33 127 20" fill="none" stroke="#b8b6b0" stroke-width="1.5"/>
+          <rect x="44" y="200" width="112" height="12" rx="0" fill="#c0beb8" stroke="#b0aeb8" stroke-width="0.5"/>
+          <g transform="translate(62, 72) scale(0.52)">
+            <rect x="0" y="0" width="116" height="116" fill="none" stroke="#888" stroke-width="4"/>
+            <line x1="108" y1="23" x2="116" y2="23" stroke="#888" stroke-width="1.5"/>
+            <line x1="108" y1="46" x2="116" y2="46" stroke="#888" stroke-width="1.5"/>
+            <line x1="108" y1="69" x2="116" y2="69" stroke="#888" stroke-width="1.5"/>
+            <line x1="108" y1="92" x2="116" y2="92" stroke="#888" stroke-width="1.5"/>
+            <ellipse cx="58" cy="79" rx="38" ry="17" fill="#888"/>
+            <ellipse cx="58" cy="46" rx="21" ry="19" fill="#888"/>
+            <ellipse cx="58" cy="57" rx="12" ry="9" fill="#999"/>
+            <ellipse cx="40" cy="45" rx="8.5" ry="17" fill="#777" transform="rotate(-12 40 45)"/>
+            <ellipse cx="76" cy="45" rx="8.5" ry="17" fill="#777" transform="rotate(12 76 45)"/>
+            <ellipse cx="49" cy="42" rx="5" ry="4.5" fill="#e8e0d0"/>
+            <ellipse cx="67" cy="42" rx="5" ry="4.5" fill="#e8e0d0"/>
+            <circle cx="49" cy="44" r="3" fill="#111"/>
+            <circle cx="67" cy="44" r="3" fill="#111"/>
+            <ellipse cx="58" cy="54" rx="4" ry="3" fill="#111"/>
+            <path d="M 49 62 L 67 62" fill="none" stroke="#777" stroke-width="1.8" stroke-linecap="round"/>
+            <rect x="30" y="93" width="8" height="15" rx="4" fill="#777"/>
+            <rect x="44" y="96" width="8" height="12" rx="4" fill="#777"/>
+            <rect x="62" y="96" width="8" height="12" rx="4" fill="#777"/>
+            <rect x="76" y="93" width="8" height="15" rx="4" fill="#777"/>
           </g>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#b8b6b0]">
         <div>
-          <div class="pcard-name">Crew Sweat — Ash</div>
-          <div class="pcard-detail">Heavy 420gsm Fleece · S–XL</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em]">Crew Sweat — Ash</p>
+          <p class="text-[9.5px] text-sb-grey tracking-[.06em] mt-0.5">Heavy 420gsm Fleece · S–XL</p>
         </div>
-        <div class="pcard-num">007</div>
+        <span class="text-[9px] text-sb-mid font-mono">007</span>
       </div>
     </div>
   </div>
 
-  <!-- BEANIES — 4 col -->
-  <div class="pgrid pgrid-4">
+  <!-- BEANIES: 4 col -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-sb-black mt-px">
 
-    <!-- Beanie: Black -->
-    <div class="pcard bg-black dark">
-      <div class="pcard-art" style="min-height:220px;">
-        <svg width="140" height="160" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
-          <!-- beanie shape -->
-          <path d="M 28 90 Q 26 50 70 28 Q 114 50 112 90 L 112 130 L 28 130 Z" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
-          <!-- cuff fold -->
-          <rect x="28" y="108" width="84" height="22" rx="0" fill="#141414" stroke="#2a2a2a" stroke-width="1"/>
-          <!-- knit texture lines on cuff -->
-          <line x1="36" y1="112" x2="36" y2="126" stroke="#1e1e1e" stroke-width="1"/>
-          <line x1="44" y1="112" x2="44" y2="126" stroke="#1e1e1e" stroke-width="1"/>
-          <line x1="52" y1="112" x2="52" y2="126" stroke="#1e1e1e" stroke-width="1"/>
-          <line x1="60" y1="112" x2="60" y2="126" stroke="#1e1e1e" stroke-width="1"/>
-          <line x1="68" y1="112" x2="68" y2="126" stroke="#1e1e1e" stroke-width="1"/>
-          <line x1="76" y1="112" x2="76" y2="126" stroke="#1e1e1e" stroke-width="1"/>
-          <line x1="84" y1="112" x2="84" y2="126" stroke="#1e1e1e" stroke-width="1"/>
-          <line x1="92" y1="112" x2="92" y2="126" stroke="#1e1e1e" stroke-width="1"/>
-          <line x1="100" y1="112" x2="100" y2="126" stroke="#1e1e1e" stroke-width="1"/>
-          <!-- logo patch -->
-          <rect x="52" y="68" width="36" height="28" rx="1" fill="#1e1e1e" stroke="#2a2a2a" stroke-width="1"/>
-          <g transform="translate(57, 72) scale(0.28)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#3a3a3a" stroke-width="4"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#3a3a3a"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#3a3a3a"/>
-            <ellipse cx="44" cy="43" rx="8" ry="6" fill="#4a4a4a"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#2a2a2a" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#2a2a2a" transform="rotate(12 58 35)"/>
-            <circle cx="37" cy="33" r="3" fill="#0a0a0a"/>
-            <circle cx="51" cy="33" r="3" fill="#0a0a0a"/>
+    <!-- Beanie: Void -->
+    <div class="pcard bg-[#111] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-8 min-h-[240px]">
+        <svg width="130" height="160" viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 24 88 Q 22 48 65 26 Q 108 48 106 88 L 106 128 L 24 128 Z" fill="#1c1c1c" stroke="#2c2c2c" stroke-width="1.5"/>
+          <rect x="24" y="106" width="82" height="22" rx="0" fill="#151515" stroke="#252525" stroke-width="1"/>
+          <line x1="32" y1="110" x2="32" y2="124" stroke="#1e1e1e" stroke-width="1"/><line x1="40" y1="110" x2="40" y2="124" stroke="#1e1e1e" stroke-width="1"/>
+          <line x1="48" y1="110" x2="48" y2="124" stroke="#1e1e1e" stroke-width="1"/><line x1="56" y1="110" x2="56" y2="124" stroke="#1e1e1e" stroke-width="1"/>
+          <line x1="64" y1="110" x2="64" y2="124" stroke="#1e1e1e" stroke-width="1"/><line x1="72" y1="110" x2="72" y2="124" stroke="#1e1e1e" stroke-width="1"/>
+          <line x1="80" y1="110" x2="80" y2="124" stroke="#1e1e1e" stroke-width="1"/><line x1="88" y1="110" x2="88" y2="124" stroke="#1e1e1e" stroke-width="1"/>
+          <line x1="96" y1="110" x2="96" y2="124" stroke="#1e1e1e" stroke-width="1"/>
+          <rect x="48" y="65" width="34" height="26" rx="1" fill="#181818" stroke="#252525" stroke-width="1"/>
+          <g transform="translate(53,70) scale(0.26)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#3a3a3a" stroke-width="4"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#3a3a3a"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#3a3a3a"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#454545"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#2a2a2a" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#2a2a2a" transform="rotate(12 61 37)"/>
+            <circle cx="38" cy="36" r="3" fill="#080808"/>
+            <circle cx="54" cy="36" r="3" fill="#080808"/>
           </g>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-4 py-3 border-t border-[#1e1e1e]">
         <div>
-          <div class="pcard-name">Beanie — Void</div>
-          <div class="pcard-detail">Acrylic Knit · Cuffed</div>
+          <p class="text-[10px] font-bold uppercase tracking-[.1em] text-sb-white">Beanie — Void</p>
+          <p class="text-[9px] text-[#444] mt-0.5">Acrylic Knit · Cuffed</p>
         </div>
-        <div class="pcard-num">008</div>
+        <span class="text-[8px] text-[#222] font-mono">008</span>
       </div>
     </div>
 
     <!-- Beanie: Ice -->
-    <div class="pcard bg-ice">
-      <div class="pcard-art" style="min-height:220px;">
-        <svg width="140" height="160" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 28 90 Q 26 50 70 28 Q 114 50 112 90 L 112 130 L 28 130 Z" fill="#b8d2e4" stroke="#a0c0d8" stroke-width="1.5"/>
-          <rect x="28" y="108" width="84" height="22" rx="0" fill="#a8c8e0" stroke="#98b8d0" stroke-width="1"/>
-          <line x1="36" y1="112" x2="36" y2="126" stroke="#98b8d0" stroke-width="1"/>
-          <line x1="44" y1="112" x2="44" y2="126" stroke="#98b8d0" stroke-width="1"/>
-          <line x1="52" y1="112" x2="52" y2="126" stroke="#98b8d0" stroke-width="1"/>
-          <line x1="60" y1="112" x2="60" y2="126" stroke="#98b8d0" stroke-width="1"/>
-          <line x1="68" y1="112" x2="68" y2="126" stroke="#98b8d0" stroke-width="1"/>
-          <line x1="76" y1="112" x2="76" y2="126" stroke="#98b8d0" stroke-width="1"/>
-          <line x1="84" y1="112" x2="84" y2="126" stroke="#98b8d0" stroke-width="1"/>
-          <line x1="92" y1="112" x2="92" y2="126" stroke="#98b8d0" stroke-width="1"/>
-          <line x1="100" y1="112" x2="100" y2="126" stroke="#98b8d0" stroke-width="1"/>
-          <rect x="52" y="68" width="36" height="28" rx="1" fill="#a0c0d8" stroke="#90b0c8" stroke-width="1"/>
-          <g transform="translate(57, 72) scale(0.28)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#4a6a80" stroke-width="4"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#4a6a80"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#4a6a80"/>
-            <ellipse cx="44" cy="43" rx="8" ry="6" fill="#5a7a90"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#3a5a70" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#3a5a70" transform="rotate(12 58 35)"/>
-            <circle cx="37" cy="33" r="3" fill="#0a1a20"/>
-            <circle cx="51" cy="33" r="3" fill="#0a1a20"/>
+    <div class="pcard bg-[#c8dcec] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-8 min-h-[240px]">
+        <svg width="130" height="160" viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 24 88 Q 22 48 65 26 Q 108 48 106 88 L 106 128 L 24 128 Z" fill="#b4ccde" stroke="#9cbcce" stroke-width="1.5"/>
+          <rect x="24" y="106" width="82" height="22" rx="0" fill="#a4bcce" stroke="#8cacbe" stroke-width="1"/>
+          <line x1="32" y1="110" x2="32" y2="124" stroke="#8cacbe" stroke-width="1"/><line x1="40" y1="110" x2="40" y2="124" stroke="#8cacbe" stroke-width="1"/>
+          <line x1="48" y1="110" x2="48" y2="124" stroke="#8cacbe" stroke-width="1"/><line x1="56" y1="110" x2="56" y2="124" stroke="#8cacbe" stroke-width="1"/>
+          <line x1="64" y1="110" x2="64" y2="124" stroke="#8cacbe" stroke-width="1"/><line x1="72" y1="110" x2="72" y2="124" stroke="#8cacbe" stroke-width="1"/>
+          <line x1="80" y1="110" x2="80" y2="124" stroke="#8cacbe" stroke-width="1"/><line x1="88" y1="110" x2="88" y2="124" stroke="#8cacbe" stroke-width="1"/>
+          <line x1="96" y1="110" x2="96" y2="124" stroke="#8cacbe" stroke-width="1"/>
+          <rect x="48" y="65" width="34" height="26" rx="1" fill="#9cbcce" stroke="#8cacbe" stroke-width="1"/>
+          <g transform="translate(53,70) scale(0.26)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#4a6a80" stroke-width="4"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#4a6a80"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#4a6a80"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#5a7a90"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#3a5a70" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#3a5a70" transform="rotate(12 61 37)"/>
+            <circle cx="38" cy="36" r="3" fill="#0a1a20"/>
+            <circle cx="54" cy="36" r="3" fill="#0a1a20"/>
           </g>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-4 py-3 border-t border-[#a0b8c8]">
         <div>
-          <div class="pcard-name">Beanie — Ice</div>
-          <div class="pcard-detail">Acrylic Knit · Cuffed</div>
+          <p class="text-[10px] font-bold uppercase tracking-[.1em]">Beanie — Ice</p>
+          <p class="text-[9px] text-sb-grey mt-0.5">Acrylic Knit · Cuffed</p>
         </div>
-        <div class="pcard-num">009</div>
+        <span class="text-[8px] text-sb-mid font-mono">009</span>
       </div>
     </div>
 
-    <!-- Beanie: Olive -->
-    <div class="pcard bg-olive dark">
-      <div class="pcard-art" style="min-height:220px;">
-        <svg width="140" height="160" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 28 90 Q 26 50 70 28 Q 114 50 112 90 L 112 130 L 28 130 Z" fill="#4a4c38" stroke="#5a5c48" stroke-width="1.5"/>
-          <rect x="28" y="108" width="84" height="22" rx="0" fill="#3a3c28" stroke="#4a4c38" stroke-width="1"/>
-          <line x1="36" y1="112" x2="36" y2="126" stroke="#4a4c38" stroke-width="1"/>
-          <line x1="44" y1="112" x2="44" y2="126" stroke="#4a4c38" stroke-width="1"/>
-          <line x1="52" y1="112" x2="52" y2="126" stroke="#4a4c38" stroke-width="1"/>
-          <line x1="60" y1="112" x2="60" y2="126" stroke="#4a4c38" stroke-width="1"/>
-          <line x1="68" y1="112" x2="68" y2="126" stroke="#4a4c38" stroke-width="1"/>
-          <line x1="76" y1="112" x2="76" y2="126" stroke="#4a4c38" stroke-width="1"/>
-          <line x1="84" y1="112" x2="84" y2="126" stroke="#4a4c38" stroke-width="1"/>
-          <line x1="92" y1="112" x2="92" y2="126" stroke="#4a4c38" stroke-width="1"/>
-          <line x1="100" y1="112" x2="100" y2="126" stroke="#4a4c38" stroke-width="1"/>
-          <rect x="52" y="68" width="36" height="28" rx="1" fill="#3a3c28" stroke="#4a4c38" stroke-width="1"/>
-          <g transform="translate(57, 72) scale(0.28)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#6a6c58" stroke-width="4"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#6a6c58"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#6a6c58"/>
-            <ellipse cx="44" cy="43" rx="8" ry="6" fill="#7a7c68"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#5a5c48" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#5a5c48" transform="rotate(12 58 35)"/>
-            <circle cx="37" cy="33" r="3" fill="#1a1c08"/>
-            <circle cx="51" cy="33" r="3" fill="#1a1c08"/>
+    <!-- Beanie: Field (Olive) -->
+    <div class="pcard bg-[#3c3b2c] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-8 min-h-[240px]">
+        <svg width="130" height="160" viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 24 88 Q 22 48 65 26 Q 108 48 106 88 L 106 128 L 24 128 Z" fill="#4a4938" stroke="#5a5948" stroke-width="1.5"/>
+          <rect x="24" y="106" width="82" height="22" rx="0" fill="#3a3928" stroke="#4a4938" stroke-width="1"/>
+          <line x1="32" y1="110" x2="32" y2="124" stroke="#4a4938" stroke-width="1"/><line x1="40" y1="110" x2="40" y2="124" stroke="#4a4938" stroke-width="1"/>
+          <line x1="48" y1="110" x2="48" y2="124" stroke="#4a4938" stroke-width="1"/><line x1="56" y1="110" x2="56" y2="124" stroke="#4a4938" stroke-width="1"/>
+          <line x1="64" y1="110" x2="64" y2="124" stroke="#4a4938" stroke-width="1"/><line x1="72" y1="110" x2="72" y2="124" stroke="#4a4938" stroke-width="1"/>
+          <line x1="80" y1="110" x2="80" y2="124" stroke="#4a4938" stroke-width="1"/><line x1="88" y1="110" x2="88" y2="124" stroke="#4a4938" stroke-width="1"/>
+          <line x1="96" y1="110" x2="96" y2="124" stroke="#4a4938" stroke-width="1"/>
+          <rect x="48" y="65" width="34" height="26" rx="1" fill="#3a3928" stroke="#4a4938" stroke-width="1"/>
+          <g transform="translate(53,70) scale(0.26)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#6a6958" stroke-width="4"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#6a6958"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#6a6958"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#7a7968"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#5a5948" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#5a5948" transform="rotate(12 61 37)"/>
+            <circle cx="38" cy="36" r="3" fill="#1a1904"/>
+            <circle cx="54" cy="36" r="3" fill="#1a1904"/>
           </g>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-4 py-3 border-t border-[#2a2918]">
         <div>
-          <div class="pcard-name">Beanie — Field</div>
-          <div class="pcard-detail">Acrylic Knit · Cuffed</div>
+          <p class="text-[10px] font-bold uppercase tracking-[.1em] text-sb-white">Beanie — Field</p>
+          <p class="text-[9px] text-[#555] mt-0.5">Acrylic Knit · Cuffed</p>
         </div>
-        <div class="pcard-num">010</div>
+        <span class="text-[8px] text-[#2a2918] font-mono">010</span>
       </div>
     </div>
 
-    <!-- Beanie: Rust/Coral -->
-    <div class="pcard bg-coral dark">
-      <div class="pcard-art" style="min-height:220px;">
-        <svg width="140" height="160" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 28 90 Q 26 50 70 28 Q 114 50 112 90 L 112 130 L 28 130 Z" fill="#b85e3a" stroke="#c87050" stroke-width="1.5"/>
-          <rect x="28" y="108" width="84" height="22" rx="0" fill="#a84e2a" stroke="#b85e3a" stroke-width="1"/>
-          <line x1="36" y1="112" x2="36" y2="126" stroke="#a84e2a" stroke-width="1"/>
-          <line x1="44" y1="112" x2="44" y2="126" stroke="#a84e2a" stroke-width="1"/>
-          <line x1="52" y1="112" x2="52" y2="126" stroke="#a84e2a" stroke-width="1"/>
-          <line x1="60" y1="112" x2="60" y2="126" stroke="#a84e2a" stroke-width="1"/>
-          <line x1="68" y1="112" x2="68" y2="126" stroke="#a84e2a" stroke-width="1"/>
-          <line x1="76" y1="112" x2="76" y2="126" stroke="#a84e2a" stroke-width="1"/>
-          <line x1="84" y1="112" x2="84" y2="126" stroke="#a84e2a" stroke-width="1"/>
-          <line x1="92" y1="112" x2="92" y2="126" stroke="#a84e2a" stroke-width="1"/>
-          <line x1="100" y1="112" x2="100" y2="126" stroke="#a84e2a" stroke-width="1"/>
-          <rect x="52" y="68" width="36" height="28" rx="1" fill="#a84e2a" stroke="#b85e3a" stroke-width="1"/>
-          <g transform="translate(57, 72) scale(0.28)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#d08060" stroke-width="4"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#d08060"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#d08060"/>
-            <ellipse cx="44" cy="43" rx="8" ry="6" fill="#e09070"/>
-            <ellipse cx="30" cy="35" rx="6" ry="12" fill="#c07050" transform="rotate(-12 30 35)"/>
-            <ellipse cx="58" cy="35" rx="6" ry="12" fill="#c07050" transform="rotate(12 58 35)"/>
-            <circle cx="37" cy="33" r="3" fill="#200a00"/>
-            <circle cx="51" cy="33" r="3" fill="#200a00"/>
+    <!-- Beanie: Coral -->
+    <div class="pcard bg-[#b05030] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-8 min-h-[240px]">
+        <svg width="130" height="160" viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 24 88 Q 22 48 65 26 Q 108 48 106 88 L 106 128 L 24 128 Z" fill="#b85e3a" stroke="#c87050" stroke-width="1.5"/>
+          <rect x="24" y="106" width="82" height="22" rx="0" fill="#a04828" stroke="#b05030" stroke-width="1"/>
+          <line x1="32" y1="110" x2="32" y2="124" stroke="#a04828" stroke-width="1"/><line x1="40" y1="110" x2="40" y2="124" stroke="#a04828" stroke-width="1"/>
+          <line x1="48" y1="110" x2="48" y2="124" stroke="#a04828" stroke-width="1"/><line x1="56" y1="110" x2="56" y2="124" stroke="#a04828" stroke-width="1"/>
+          <line x1="64" y1="110" x2="64" y2="124" stroke="#a04828" stroke-width="1"/><line x1="72" y1="110" x2="72" y2="124" stroke="#a04828" stroke-width="1"/>
+          <line x1="80" y1="110" x2="80" y2="124" stroke="#a04828" stroke-width="1"/><line x1="88" y1="110" x2="88" y2="124" stroke="#a04828" stroke-width="1"/>
+          <line x1="96" y1="110" x2="96" y2="124" stroke="#a04828" stroke-width="1"/>
+          <rect x="48" y="65" width="34" height="26" rx="1" fill="#a04828" stroke="#b05030" stroke-width="1"/>
+          <g transform="translate(53,70) scale(0.26)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#d07050" stroke-width="4"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#d07050"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#d07050"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#e08060"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#c06040" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#c06040" transform="rotate(12 61 37)"/>
+            <circle cx="38" cy="36" r="3" fill="#200800"/>
+            <circle cx="54" cy="36" r="3" fill="#200800"/>
           </g>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-4 py-3 border-t border-[#802818]">
         <div>
-          <div class="pcard-name">Beanie — Coral</div>
-          <div class="pcard-detail">Acrylic Knit · Cuffed</div>
+          <p class="text-[10px] font-bold uppercase tracking-[.1em] text-sb-white">Beanie — Coral</p>
+          <p class="text-[9px] text-[#666] mt-0.5">Acrylic Knit · Cuffed</p>
         </div>
-        <div class="pcard-num">011</div>
+        <span class="text-[8px] text-[#501808] font-mono">011</span>
       </div>
     </div>
   </div>
 
-  <!-- 93 PANTS — 3 col -->
-  <div class="pgrid pgrid-3">
+  <!-- 93 PANTS: 3 col -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-sb-black mt-px">
 
     <!-- Pant: Sage -->
-    <div class="pcard bg-sage dark">
-      <div class="pcard-art" style="min-height:360px;">
-        <svg width="160" height="280" viewBox="0 0 160 280" xmlns="http://www.w3.org/2000/svg">
-          <!-- 93 style: relaxed straight, elastic waist -->
-          <!-- waistband -->
-          <rect x="20" y="16" width="120" height="20" rx="2" fill="#304030" stroke="#405040" stroke-width="1"/>
-          <!-- elastic gather detail -->
-          <line x1="28" y1="26" x2="132" y2="26" stroke="#405040" stroke-width="1" stroke-dasharray="3,2"/>
-          <!-- main trouser body -->
-          <path d="M 20 36 L 24 200 L 68 200 L 80 140 L 92 200 L 136 200 L 140 36 Z" fill="#4a5a4a" stroke="#557055" stroke-width="1.5"/>
-          <!-- crotch seam -->
-          <path d="M 24 100 Q 80 110 136 100" fill="none" stroke="#405040" stroke-width="1"/>
-          <!-- inseam lines -->
-          <line x1="68" y1="120" x2="68" y2="200" stroke="#405040" stroke-width="0.8" stroke-dasharray="4,3"/>
-          <line x1="92" y1="120" x2="92" y2="200" stroke="#405040" stroke-width="0.8" stroke-dasharray="4,3"/>
-          <!-- center seam -->
-          <line x1="80" y1="36" x2="80" y2="140" stroke="#405040" stroke-width="0.8"/>
-          <!-- pockets (side seam pockets) -->
-          <path d="M 24 60 Q 28 85 24 100" fill="none" stroke="#405040" stroke-width="1.5"/>
-          <path d="M 136 60 Q 132 85 136 100" fill="none" stroke="#405040" stroke-width="1.5"/>
-          <!-- leg cuffs / hem -->
-          <rect x="24" y="196" width="44" height="8" rx="0" fill="#384838" stroke="#405040" stroke-width="0.8"/>
-          <rect x="92" y="196" width="44" height="8" rx="0" fill="#384838" stroke="#405040" stroke-width="0.8"/>
-          <!-- small logo on left thigh -->
-          <g transform="translate(30, 115) scale(0.17)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#557055" stroke-width="4"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#557055"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#557055"/>
-            <ellipse cx="44" cy="43" rx="8" ry="6" fill="#658065"/>
-            <circle cx="37" cy="33" r="3" fill="#101a10"/>
-            <circle cx="51" cy="33" r="3" fill="#101a10"/>
+    <div class="pcard bg-[#3d4f3d] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[400px]">
+        <svg width="150" height="280" viewBox="0 0 150 280" xmlns="http://www.w3.org/2000/svg">
+          <rect x="18" y="14" width="114" height="20" rx="2" fill="#2d3f2d" stroke="#3d4f3d" stroke-width="1"/>
+          <line x1="26" y1="24" x2="126" y2="24" stroke="#3d4f3d" stroke-width="1" stroke-dasharray="3,2"/>
+          <path d="M 18 34 L 22 195 L 64 195 L 75 135 L 86 195 L 128 195 L 132 34 Z" fill="#4a5c4a" stroke="#556055" stroke-width="1.5"/>
+          <path d="M 22 95 Q 75 105 128 95" fill="none" stroke="#3d4f3d" stroke-width="1"/>
+          <line x1="64" y1="115" x2="64" y2="195" stroke="#3d4f3d" stroke-width="0.8" stroke-dasharray="4,3"/>
+          <line x1="86" y1="115" x2="86" y2="195" stroke="#3d4f3d" stroke-width="0.8" stroke-dasharray="4,3"/>
+          <line x1="75" y1="34" x2="75" y2="135" stroke="#3d4f3d" stroke-width="0.8"/>
+          <path d="M 22 56 Q 26 80 22 95" fill="none" stroke="#3d4f3d" stroke-width="1.5"/>
+          <path d="M 128 56 Q 124 80 128 95" fill="none" stroke="#3d4f3d" stroke-width="1.5"/>
+          <rect x="22" y="191" width="42" height="8" rx="0" fill="#2d3f2d" stroke="#3d4f3d" stroke-width="0.8"/>
+          <rect x="86" y="191" width="42" height="8" rx="0" fill="#2d3f2d" stroke="#3d4f3d" stroke-width="0.8"/>
+          <g transform="translate(26,110) scale(0.16)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#556055" stroke-width="4"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#556055"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#556055"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#657065"/>
+            <circle cx="38" cy="36" r="3" fill="#101a10"/>
+            <circle cx="54" cy="36" r="3" fill="#101a10"/>
           </g>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#2d3f2d]">
         <div>
-          <div class="pcard-name">93 Pant — Sage</div>
-          <div class="pcard-detail">Cotton Canvas · Elastic Waist · Relaxed Straight</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em] text-sb-white">93 Pant — Sage</p>
+          <p class="text-[9.5px] text-[#555] tracking-[.06em] mt-0.5">Cotton Canvas · Elastic Waist · Relaxed</p>
         </div>
-        <div class="pcard-num">012</div>
+        <span class="text-[9px] text-[#2d3f2d] font-mono">012</span>
       </div>
     </div>
 
     <!-- Pant: Lemon -->
-    <div class="pcard" style="background:#d0d400;">
-      <div class="pcard-art" style="min-height:360px;">
-        <svg width="160" height="280" viewBox="0 0 160 280" xmlns="http://www.w3.org/2000/svg">
-          <rect x="20" y="16" width="120" height="20" rx="2" fill="#b0b400" stroke="#c0c400" stroke-width="1"/>
-          <line x1="28" y1="26" x2="132" y2="26" stroke="#c0c400" stroke-width="1" stroke-dasharray="3,2"/>
-          <path d="M 20 36 L 24 200 L 68 200 L 80 140 L 92 200 L 136 200 L 140 36 Z" fill="#c8cc00" stroke="#d4d800" stroke-width="1.5"/>
-          <path d="M 24 100 Q 80 110 136 100" fill="none" stroke="#b0b400" stroke-width="1"/>
-          <line x1="68" y1="120" x2="68" y2="200" stroke="#b0b400" stroke-width="0.8" stroke-dasharray="4,3"/>
-          <line x1="92" y1="120" x2="92" y2="200" stroke="#b0b400" stroke-width="0.8" stroke-dasharray="4,3"/>
-          <line x1="80" y1="36" x2="80" y2="140" stroke="#b0b400" stroke-width="0.8"/>
-          <path d="M 24 60 Q 28 85 24 100" fill="none" stroke="#b0b400" stroke-width="1.5"/>
-          <path d="M 136 60 Q 132 85 136 100" fill="none" stroke="#b0b400" stroke-width="1.5"/>
-          <rect x="24" y="196" width="44" height="8" rx="0" fill="#a8ac00" stroke="#b0b400" stroke-width="0.8"/>
-          <rect x="92" y="196" width="44" height="8" rx="0" fill="#a8ac00" stroke="#b0b400" stroke-width="0.8"/>
-          <g transform="translate(30, 115) scale(0.17)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#a0a400" stroke-width="4"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#a0a400"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#a0a400"/>
-            <ellipse cx="44" cy="43" rx="8" ry="6" fill="#b0b400"/>
-            <circle cx="37" cy="33" r="3" fill="#202400"/>
-            <circle cx="51" cy="33" r="3" fill="#202400"/>
+    <div class="pcard bg-[#c8cc00] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[400px]">
+        <svg width="150" height="280" viewBox="0 0 150 280" xmlns="http://www.w3.org/2000/svg">
+          <rect x="18" y="14" width="114" height="20" rx="2" fill="#a8ac00" stroke="#b8bc00" stroke-width="1"/>
+          <line x1="26" y1="24" x2="126" y2="24" stroke="#b8bc00" stroke-width="1" stroke-dasharray="3,2"/>
+          <path d="M 18 34 L 22 195 L 64 195 L 75 135 L 86 195 L 128 195 L 132 34 Z" fill="#d0d400" stroke="#e0e400" stroke-width="1.5"/>
+          <path d="M 22 95 Q 75 105 128 95" fill="none" stroke="#a8ac00" stroke-width="1"/>
+          <line x1="64" y1="115" x2="64" y2="195" stroke="#a8ac00" stroke-width="0.8" stroke-dasharray="4,3"/>
+          <line x1="86" y1="115" x2="86" y2="195" stroke="#a8ac00" stroke-width="0.8" stroke-dasharray="4,3"/>
+          <line x1="75" y1="34" x2="75" y2="135" stroke="#a8ac00" stroke-width="0.8"/>
+          <path d="M 22 56 Q 26 80 22 95" fill="none" stroke="#a8ac00" stroke-width="1.5"/>
+          <path d="M 128 56 Q 124 80 128 95" fill="none" stroke="#a8ac00" stroke-width="1.5"/>
+          <rect x="22" y="191" width="42" height="8" rx="0" fill="#989c00" stroke="#a8ac00" stroke-width="0.8"/>
+          <rect x="86" y="191" width="42" height="8" rx="0" fill="#989c00" stroke="#a8ac00" stroke-width="0.8"/>
+          <g transform="translate(26,110) scale(0.16)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#a0a400" stroke-width="4"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#a0a400"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#a0a400"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#b0b400"/>
+            <circle cx="38" cy="36" r="3" fill="#222400"/>
+            <circle cx="54" cy="36" r="3" fill="#222400"/>
           </g>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#a0a400]">
         <div>
-          <div class="pcard-name">93 Pant — Lemon</div>
-          <div class="pcard-detail">Cotton Canvas · Elastic Waist · Statement</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em] text-sb-black">93 Pant — Lemon</p>
+          <p class="text-[9.5px] text-[#555] tracking-[.06em] mt-0.5">Cotton Canvas · Statement Colour</p>
         </div>
-        <div class="pcard-num">013</div>
+        <span class="text-[9px] text-[#888800] font-mono">013</span>
       </div>
     </div>
 
     <!-- Pant: Coral -->
-    <div class="pcard bg-coral dark">
-      <div class="pcard-art" style="min-height:360px;">
-        <svg width="160" height="280" viewBox="0 0 160 280" xmlns="http://www.w3.org/2000/svg">
-          <rect x="20" y="16" width="120" height="20" rx="2" fill="#903820" stroke="#a04830" stroke-width="1"/>
-          <line x1="28" y1="26" x2="132" y2="26" stroke="#a04830" stroke-width="1" stroke-dasharray="3,2"/>
-          <path d="M 20 36 L 24 200 L 68 200 L 80 140 L 92 200 L 136 200 L 140 36 Z" fill="#b85e3a" stroke="#c87050" stroke-width="1.5"/>
-          <path d="M 24 100 Q 80 110 136 100" fill="none" stroke="#903820" stroke-width="1"/>
-          <line x1="68" y1="120" x2="68" y2="200" stroke="#903820" stroke-width="0.8" stroke-dasharray="4,3"/>
-          <line x1="92" y1="120" x2="92" y2="200" stroke="#903820" stroke-width="0.8" stroke-dasharray="4,3"/>
-          <line x1="80" y1="36" x2="80" y2="140" stroke="#903820" stroke-width="0.8"/>
-          <path d="M 24 60 Q 28 85 24 100" fill="none" stroke="#903820" stroke-width="1.5"/>
-          <path d="M 136 60 Q 132 85 136 100" fill="none" stroke="#903820" stroke-width="1.5"/>
-          <rect x="24" y="196" width="44" height="8" rx="0" fill="#802810" stroke="#903820" stroke-width="0.8"/>
-          <rect x="92" y="196" width="44" height="8" rx="0" fill="#802810" stroke="#903820" stroke-width="0.8"/>
-          <g transform="translate(30, 115) scale(0.17)">
-            <rect x="0" y="0" width="88" height="88" fill="none" stroke="#d07050" stroke-width="4"/>
-            <ellipse cx="44" cy="56" rx="28" ry="12" fill="#d07050"/>
-            <ellipse cx="44" cy="36" rx="15" ry="13" fill="#d07050"/>
-            <ellipse cx="44" cy="43" rx="8" ry="6" fill="#e08060"/>
-            <circle cx="37" cy="33" r="3" fill="#200800"/>
-            <circle cx="51" cy="33" r="3" fill="#200800"/>
+    <div class="pcard bg-[#b05030] flex flex-col">
+      <div class="flex-1 flex items-center justify-center p-10 min-h-[400px]">
+        <svg width="150" height="280" viewBox="0 0 150 280" xmlns="http://www.w3.org/2000/svg">
+          <rect x="18" y="14" width="114" height="20" rx="2" fill="#882810" stroke="#a03820" stroke-width="1"/>
+          <line x1="26" y1="24" x2="126" y2="24" stroke="#a03820" stroke-width="1" stroke-dasharray="3,2"/>
+          <path d="M 18 34 L 22 195 L 64 195 L 75 135 L 86 195 L 128 195 L 132 34 Z" fill="#c06040" stroke="#d07050" stroke-width="1.5"/>
+          <path d="M 22 95 Q 75 105 128 95" fill="none" stroke="#882810" stroke-width="1"/>
+          <line x1="64" y1="115" x2="64" y2="195" stroke="#882810" stroke-width="0.8" stroke-dasharray="4,3"/>
+          <line x1="86" y1="115" x2="86" y2="195" stroke="#882810" stroke-width="0.8" stroke-dasharray="4,3"/>
+          <line x1="75" y1="34" x2="75" y2="135" stroke="#882810" stroke-width="0.8"/>
+          <path d="M 22 56 Q 26 80 22 95" fill="none" stroke="#882810" stroke-width="1.5"/>
+          <path d="M 128 56 Q 124 80 128 95" fill="none" stroke="#882810" stroke-width="1.5"/>
+          <rect x="22" y="191" width="42" height="8" rx="0" fill="#781808" stroke="#882810" stroke-width="0.8"/>
+          <rect x="86" y="191" width="42" height="8" rx="0" fill="#781808" stroke="#882810" stroke-width="0.8"/>
+          <g transform="translate(26,110) scale(0.16)">
+            <rect x="0" y="0" width="92" height="92" fill="none" stroke="#d07050" stroke-width="4"/>
+            <ellipse cx="46" cy="60" rx="30" ry="13" fill="#d07050"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#d07050"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#e08060"/>
+            <circle cx="38" cy="36" r="3" fill="#200800"/>
+            <circle cx="54" cy="36" r="3" fill="#200800"/>
           </g>
         </svg>
       </div>
-      <div class="pcard-info">
+      <div class="flex justify-between items-end px-5 py-4 border-t border-[#782010]">
         <div>
-          <div class="pcard-name">93 Pant — Coral</div>
-          <div class="pcard-detail">Cotton Canvas · Elastic Waist · Relaxed Straight</div>
+          <p class="text-[11px] font-bold uppercase tracking-[.1em] text-sb-white">93 Pant — Coral</p>
+          <p class="text-[9.5px] text-[#555] tracking-[.06em] mt-0.5">Cotton Canvas · Elastic Waist · Relaxed</p>
         </div>
-        <div class="pcard-num">014</div>
+        <span class="text-[9px] text-[#501808] font-mono">014</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════ BOARDS ═══════════════════════════ -->
-<section id="boards">
-  <div class="sec-head">
-    <h2>Boards</h2>
-    <span class="sec-label">SS 26 Decks</span>
+<!-- ════════════ BOARDS ════════════ -->
+<section id="boards" class="bg-[#0a0a0a]">
+  <div class="flex items-end justify-between px-6 md:px-10 pt-16 pb-7 border-b border-[#1c1c1c]">
+    <h2 class="text-[clamp(32px,5vw,64px)] font-black uppercase tracking-tight leading-none text-sb-white">Boards</h2>
+    <span class="text-[9px] tracking-[.2em] uppercase text-[#333]">SS 26 Decks</span>
   </div>
 
-  <div class="boards-wrap">
-    <div class="boards-grid">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#111] p-px">
 
-      <!-- SCI-FI 1: Deep Orbit -->
-      <div class="bcard">
-        <div class="bcard-tag sf">Sci-Fi</div>
-        <div class="deck-wrap">
-          <svg width="90" height="280" viewBox="0 0 90 280" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#000428"/>
-                <stop offset="50%" stop-color="#004080"/>
-                <stop offset="100%" stop-color="#00cfff"/>
-              </linearGradient>
-            </defs>
-            <!-- deck shape: rounded nose/tail -->
-            <path d="M 15 30 Q 10 10 45 8 Q 80 10 75 30 L 78 240 Q 80 268 45 272 Q 10 268 12 240 Z" fill="url(#g1)"/>
-            <!-- graphic: concentric orbit rings -->
-            <ellipse cx="45" cy="140" rx="30" ry="10" fill="none" stroke="rgba(0,207,255,0.25)" stroke-width="1"/>
-            <ellipse cx="45" cy="140" rx="22" ry="7" fill="none" stroke="rgba(0,207,255,0.35)" stroke-width="1"/>
-            <ellipse cx="45" cy="140" rx="13" ry="4" fill="none" stroke="rgba(0,207,255,0.5)" stroke-width="1"/>
-            <circle cx="45" cy="140" r="4" fill="#00cfff" opacity=".8"/>
-            <!-- grid lines -->
-            <line x1="15" y1="100" x2="75" y2="100" stroke="rgba(0,207,255,0.1)" stroke-width="0.7"/>
-            <line x1="15" y1="120" x2="75" y2="120" stroke="rgba(0,207,255,0.1)" stroke-width="0.7"/>
-            <line x1="15" y1="140" x2="75" y2="140" stroke="rgba(0,207,255,0.1)" stroke-width="0.7"/>
-            <line x1="15" y1="160" x2="75" y2="160" stroke="rgba(0,207,255,0.1)" stroke-width="0.7"/>
-            <line x1="15" y1="180" x2="75" y2="180" stroke="rgba(0,207,255,0.1)" stroke-width="0.7"/>
-            <line x1="30" y1="30" x2="30" y2="250" stroke="rgba(0,207,255,0.07)" stroke-width="0.7"/>
-            <line x1="45" y1="20" x2="45" y2="265" stroke="rgba(0,207,255,0.07)" stroke-width="0.7"/>
-            <line x1="60" y1="30" x2="60" y2="250" stroke="rgba(0,207,255,0.07)" stroke-width="0.7"/>
-            <!-- trucks holes -->
-            <circle cx="30" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="30" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-          </svg>
-        </div>
-        <div class="bcard-name">Deep Orbit</div>
-        <div class="bcard-desc">Ocean gradient<br/>subsurface topography<br/>8.25"</div>
+    <!-- Deep Orbit -->
+    <div class="board-card bg-[#0e0e0e] flex flex-col items-center pt-10 pb-8 px-5 relative">
+      <span class="absolute top-3.5 right-3.5 text-[7.5px] tracking-[.18em] uppercase px-2 py-0.5 border border-sb-sci text-sb-sci">Sci-Fi</span>
+      <div class="deck-art mb-6">
+        <svg width="80" height="256" viewBox="0 0 80 256" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="b1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#000428"/><stop offset="50%" stop-color="#004080"/><stop offset="100%" stop-color="#00cfff"/></linearGradient></defs>
+          <path d="M 12 26 Q 8 8 40 6 Q 72 8 68 26 L 70 222 Q 72 248 40 252 Q 8 248 10 222 Z" fill="url(#b1)"/>
+          <ellipse cx="40" cy="128" rx="26" ry="9" fill="none" stroke="rgba(0,207,255,.25)" stroke-width="1"/>
+          <ellipse cx="40" cy="128" rx="18" ry="6" fill="none" stroke="rgba(0,207,255,.35)" stroke-width="1"/>
+          <ellipse cx="40" cy="128" rx="10" ry="3.5" fill="none" stroke="rgba(0,207,255,.5)" stroke-width="1"/>
+          <circle cx="40" cy="128" r="3" fill="#00cfff" opacity=".8"/>
+          <line x1="12" y1="90" x2="68" y2="90" stroke="rgba(0,207,255,.1)" stroke-width=".7"/>
+          <line x1="12" y1="128" x2="68" y2="128" stroke="rgba(0,207,255,.1)" stroke-width=".7"/>
+          <line x1="12" y1="166" x2="68" y2="166" stroke="rgba(0,207,255,.1)" stroke-width=".7"/>
+          <line x1="26" y1="26" x2="26" y2="232" stroke="rgba(0,207,255,.07)" stroke-width=".7"/>
+          <line x1="40" y1="16" x2="40" y2="245" stroke="rgba(0,207,255,.07)" stroke-width=".7"/>
+          <line x1="54" y1="26" x2="54" y2="232" stroke="rgba(0,207,255,.07)" stroke-width=".7"/>
+          <circle cx="26" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/>
+          <circle cx="26" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/>
+        </svg>
       </div>
-
-      <!-- SCI-FI 2: Void Pulse -->
-      <div class="bcard">
-        <div class="bcard-tag sf">Sci-Fi</div>
-        <div class="deck-wrap">
-          <svg width="90" height="280" viewBox="0 0 90 280" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#0a0010"/>
-                <stop offset="45%" stop-color="#2a0060"/>
-                <stop offset="80%" stop-color="#5500cc"/>
-                <stop offset="100%" stop-color="#c8ff00"/>
-              </linearGradient>
-            </defs>
-            <path d="M 15 30 Q 10 10 45 8 Q 80 10 75 30 L 78 240 Q 80 268 45 272 Q 10 268 12 240 Z" fill="url(#g2)"/>
-            <!-- pulse wave graphic -->
-            <polyline points="16,100 22,100 26,80 30,120 34,90 38,130 42,85 46,135 50,90 54,125 58,95 62,115 66,100 72,100" fill="none" stroke="#c8ff00" stroke-width="1.5" opacity=".7"/>
-            <polyline points="16,140 22,140 26,120 30,160 34,130 38,170 42,125 46,175 50,130 54,165 58,135 62,155 66,140 72,140" fill="none" stroke="#c8ff00" stroke-width="1" opacity=".4"/>
-            <!-- glow dot -->
-            <circle cx="45" cy="110" r="5" fill="#c8ff00" opacity=".5"/>
-            <circle cx="45" cy="110" r="2" fill="#c8ff00"/>
-            <circle cx="30" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="30" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-          </svg>
-        </div>
-        <div class="bcard-name">Void Pulse</div>
-        <div class="bcard-desc">Dark matter field<br/>neon signal trace<br/>8.5"</div>
-      </div>
-
-      <!-- SCI-FI 3: Bioluminescent -->
-      <div class="bcard">
-        <div class="bcard-tag sf">Sci-Fi</div>
-        <div class="deck-wrap">
-          <svg width="90" height="280" viewBox="0 0 90 280" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#001a00"/>
-                <stop offset="50%" stop-color="#003820"/>
-                <stop offset="100%" stop-color="#00ee88"/>
-              </linearGradient>
-            </defs>
-            <path d="M 15 30 Q 10 10 45 8 Q 80 10 75 30 L 78 240 Q 80 268 45 272 Q 10 268 12 240 Z" fill="url(#g3)"/>
-            <!-- jellyfish/bioluminescent pattern -->
-            <circle cx="45" cy="130" r="18" fill="none" stroke="#00ee88" stroke-width="1" opacity=".3"/>
-            <circle cx="45" cy="130" r="10" fill="none" stroke="#00ee88" stroke-width="1.2" opacity=".5"/>
-            <circle cx="45" cy="130" r="4" fill="#00ee88" opacity=".7"/>
-            <!-- tentacle lines -->
-            <line x1="38" y1="148" x2="35" y2="175" stroke="#00ee88" stroke-width="0.8" opacity=".4"/>
-            <line x1="43" y1="150" x2="41" y2="178" stroke="#00ee88" stroke-width="0.8" opacity=".4"/>
-            <line x1="47" y1="150" x2="48" y2="178" stroke="#00ee88" stroke-width="0.8" opacity=".4"/>
-            <line x1="52" y1="148" x2="54" y2="175" stroke="#00ee88" stroke-width="0.8" opacity=".4"/>
-            <!-- scattered spores -->
-            <circle cx="25" cy="90" r="1.5" fill="#00ee88" opacity=".4"/>
-            <circle cx="62" cy="80" r="1" fill="#00ee88" opacity=".3"/>
-            <circle cx="30" cy="165" r="1.5" fill="#00ee88" opacity=".35"/>
-            <circle cx="65" cy="170" r="1" fill="#00ee88" opacity=".3"/>
-            <circle cx="20" cy="200" r="1" fill="#00ee88" opacity=".25"/>
-            <circle cx="70" cy="210" r="1.5" fill="#00ee88" opacity=".3"/>
-            <circle cx="30" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="30" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-          </svg>
-        </div>
-        <div class="bcard-name">Bioluminescent</div>
-        <div class="bcard-desc">Deep sea glow<br/>phosphor ink print<br/>8.375"</div>
-      </div>
-
-      <!-- SCI-FI 4: Red Giant -->
-      <div class="bcard">
-        <div class="bcard-tag sf">Sci-Fi</div>
-        <div class="deck-wrap">
-          <svg width="90" height="280" viewBox="0 0 90 280" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#1a0000"/>
-                <stop offset="40%" stop-color="#5a0000"/>
-                <stop offset="80%" stop-color="#cc2200"/>
-                <stop offset="100%" stop-color="#ff6600"/>
-              </linearGradient>
-            </defs>
-            <path d="M 15 30 Q 10 10 45 8 Q 80 10 75 30 L 78 240 Q 80 268 45 272 Q 10 268 12 240 Z" fill="url(#g4)"/>
-            <!-- stellar collapse rings -->
-            <circle cx="45" cy="130" r="26" fill="none" stroke="#ff6600" stroke-width="0.8" opacity=".2"/>
-            <circle cx="45" cy="130" r="18" fill="none" stroke="#ff4400" stroke-width="1" opacity=".35"/>
-            <circle cx="45" cy="130" r="10" fill="none" stroke="#ff2200" stroke-width="1.2" opacity=".5"/>
-            <circle cx="45" cy="130" r="5" fill="#ff8800" opacity=".6"/>
-            <circle cx="45" cy="130" r="2" fill="#ffcc00"/>
-            <!-- flare lines -->
-            <line x1="45" y1="104" x2="45" y2="95" stroke="#ff6600" stroke-width="1" opacity=".5"/>
-            <line x1="45" y1="156" x2="45" y2="165" stroke="#ff6600" stroke-width="1" opacity=".5"/>
-            <line x1="19" y1="130" x2="10" y2="130" stroke="#ff6600" stroke-width="1" opacity=".5"/>
-            <line x1="71" y1="130" x2="80" y2="130" stroke="#ff6600" stroke-width="1" opacity=".5"/>
-            <circle cx="30" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="30" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-          </svg>
-        </div>
-        <div class="bcard-name">Red Giant</div>
-        <div class="bcard-desc">Stellar collapse<br/>dying star sequence<br/>8.5"</div>
-      </div>
-
-      <!-- IRONIC 1: Good Boy -->
-      <div class="bcard">
-        <div class="bcard-tag ir">Ironic</div>
-        <div class="deck-wrap">
-          <svg width="90" height="280" viewBox="0 0 90 280" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 15 30 Q 10 10 45 8 Q 80 10 75 30 L 78 240 Q 80 268 45 272 Q 10 268 12 240 Z" fill="#f0ede8"/>
-            <!-- mugshot lines -->
-            <line x1="15" y1="80" x2="78" y2="80" stroke="#e0ddd8" stroke-width="1"/>
-            <line x1="15" y1="100" x2="78" y2="100" stroke="#e0ddd8" stroke-width="1"/>
-            <!-- dachshund mugshot in center -->
-            <g transform="translate(18, 90) scale(0.52)">
-              <rect x="0" y="0" width="88" height="110" fill="none" stroke="#ccc" stroke-width="1.5"/>
-              <!-- ruler right -->
-              <line x1="80" y1="20" x2="88" y2="20" stroke="#ccc" stroke-width="1"/>
-              <line x1="80" y1="40" x2="88" y2="40" stroke="#ccc" stroke-width="1"/>
-              <line x1="80" y1="60" x2="88" y2="60" stroke="#ccc" stroke-width="1"/>
-              <line x1="80" y1="80" x2="88" y2="80" stroke="#ccc" stroke-width="1"/>
-              <!-- dog -->
-              <ellipse cx="44" cy="78" rx="30" ry="14" fill="#5c3a1e"/>
-              <ellipse cx="44" cy="48" rx="18" ry="16" fill="#5c3a1e"/>
-              <ellipse cx="44" cy="58" rx="11" ry="8" fill="#7a4f2a"/>
-              <ellipse cx="29" cy="47" rx="7" ry="15" fill="#3e2210" transform="rotate(-12 29 47)"/>
-              <ellipse cx="59" cy="47" rx="7" ry="15" fill="#3e2210" transform="rotate(12 59 47)"/>
-              <ellipse cx="37" cy="44" rx="5" ry="4" fill="#fff"/>
-              <ellipse cx="51" cy="44" rx="5" ry="4" fill="#fff"/>
-              <circle cx="37" cy="45" r="3" fill="#0e0600"/>
-              <circle cx="51" cy="45" r="3" fill="#0e0600"/>
-              <ellipse cx="44" cy="55" rx="3.5" ry="2.5" fill="#0e0600"/>
-              <path d="M 37 63 L 51 63" fill="none" stroke="#3a1e08" stroke-width="1.5" stroke-linecap="round"/>
-              <rect x="24" y="88" width="7" height="14" rx="3.5" fill="#3e2210"/>
-              <rect x="36" y="91" width="7" height="11" rx="3.5" fill="#3e2210"/>
-              <rect x="45" y="91" width="7" height="11" rx="3.5" fill="#3e2210"/>
-              <rect x="57" y="88" width="7" height="14" rx="3.5" fill="#3e2210"/>
-            </g>
-            <!-- DETAINED text at bottom -->
-            <text x="45" y="248" font-size="7" fill="#888" text-anchor="middle" font-family="monospace" letter-spacing="3">DETAINED</text>
-            <circle cx="30" cy="50" r="3" fill="rgba(0,0,0,.15)"/>
-            <circle cx="60" cy="50" r="3" fill="rgba(0,0,0,.15)"/>
-            <circle cx="30" cy="230" r="3" fill="rgba(0,0,0,.15)"/>
-            <circle cx="60" cy="230" r="3" fill="rgba(0,0,0,.15)"/>
-          </svg>
-        </div>
-        <div class="bcard-name">Good Boy</div>
-        <div class="bcard-desc">Clean white mugshot<br/>"DETAINED" print<br/>8.25"</div>
-      </div>
-
-      <!-- IRONIC 2: Slice -->
-      <div class="bcard">
-        <div class="bcard-tag ir">Ironic</div>
-        <div class="deck-wrap">
-          <svg width="90" height="280" viewBox="0 0 90 280" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#ff8c00"/>
-                <stop offset="100%" stop-color="#ff4500"/>
-              </linearGradient>
-            </defs>
-            <path d="M 15 30 Q 10 10 45 8 Q 80 10 75 30 L 78 240 Q 80 268 45 272 Q 10 268 12 240 Z" fill="url(#g5)"/>
-            <!-- pizza slice graphic -->
-            <!-- crust top -->
-            <ellipse cx="45" cy="90" rx="26" ry="8" fill="#d4774a"/>
-            <!-- cheese triangle -->
-            <polygon points="19,92 71,92 45,185" fill="#f5d070"/>
-            <!-- pepperoni spots -->
-            <circle cx="38" cy="115" r="5" fill="#cc2200"/>
-            <circle cx="53" cy="108" r="4.5" fill="#cc2200"/>
-            <circle cx="46" cy="135" r="4" fill="#cc2200"/>
-            <circle cx="37" cy="148" r="3.5" fill="#cc2200"/>
-            <circle cx="55" cy="145" r="3" fill="#cc2200"/>
-            <!-- tiny deadpan dachshund sitting on slice -->
-            <g transform="translate(32, 160) scale(0.22)">
-              <ellipse cx="44" cy="56" rx="28" ry="12" fill="#5c3a1e"/>
-              <ellipse cx="44" cy="36" rx="15" ry="13" fill="#5c3a1e"/>
-              <ellipse cx="44" cy="43" rx="8.5" ry="6.5" fill="#7a4f2a"/>
-              <ellipse cx="30" cy="35" rx="6" ry="12" fill="#3e2210" transform="rotate(-12 30 35)"/>
-              <ellipse cx="58" cy="35" rx="6" ry="12" fill="#3e2210" transform="rotate(12 58 35)"/>
-              <circle cx="37" cy="33" r="3" fill="#0e0600"/>
-              <circle cx="51" cy="33" r="3" fill="#0e0600"/>
-              <ellipse cx="44" cy="41" rx="3" ry="2" fill="#0e0600"/>
-              <path d="M 37 47 L 51 47" fill="none" stroke="#3a1e08" stroke-width="2" stroke-linecap="round"/>
-            </g>
-            <circle cx="30" cy="50" r="3" fill="rgba(0,0,0,.3)"/>
-            <circle cx="60" cy="50" r="3" fill="rgba(0,0,0,.3)"/>
-            <circle cx="30" cy="230" r="3" fill="rgba(0,0,0,.3)"/>
-            <circle cx="60" cy="230" r="3" fill="rgba(0,0,0,.3)"/>
-          </svg>
-        </div>
-        <div class="bcard-name">Slice</div>
-        <div class="bcard-desc">Pizza graphic<br/>deadpan dachshund<br/>8.0"</div>
-      </div>
-
-      <!-- IRONIC 3: Form 27-B -->
-      <div class="bcard">
-        <div class="bcard-tag ir">Ironic</div>
-        <div class="deck-wrap">
-          <svg width="90" height="280" viewBox="0 0 90 280" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 15 30 Q 10 10 45 8 Q 80 10 75 30 L 78 240 Q 80 268 45 272 Q 10 268 12 240 Z" fill="#e8e4dc"/>
-            <!-- DMV form lines -->
-            <rect x="20" y="55" width="52" height="6" rx="0" fill="#ccc"/>
-            <text x="20" y="53" font-size="4.5" fill="#aaa" font-family="monospace">FORM 27-B / APPLICANT</text>
-            <rect x="20" y="75" width="34" height="5" rx="0" fill="#ccc"/>
-            <text x="20" y="73" font-size="4" fill="#aaa" font-family="monospace">LAST NAME</text>
-            <rect x="58" y="75" width="14" height="5" rx="0" fill="#ccc"/>
-            <text x="58" y="73" font-size="4" fill="#aaa" font-family="monospace">D.O.B.</text>
-            <rect x="20" y="94" width="52" height="5" rx="0" fill="#ccc"/>
-            <text x="20" y="92" font-size="4" fill="#aaa" font-family="monospace">ADDRESS</text>
-            <rect x="20" y="112" width="25" height="5" rx="0" fill="#ccc"/>
-            <text x="20" y="110" font-size="4" fill="#aaa" font-family="monospace">CITY</text>
-            <rect x="48" y="112" width="10" height="5" rx="0" fill="#ccc"/>
-            <text x="48" y="110" font-size="4" fill="#aaa" font-family="monospace">ST</text>
-            <rect x="61" y="112" width="11" height="5" rx="0" fill="#ccc"/>
-            <text x="61" y="110" font-size="4" fill="#aaa" font-family="monospace">ZIP</text>
-            <!-- "please take a number" stamp effect -->
-            <rect x="18" y="135" width="56" height="22" rx="1" fill="none" stroke="#cc0000" stroke-width="1.5" opacity=".6" transform="rotate(-5 46 146)"/>
-            <text x="46" y="145" font-size="6.5" fill="#cc0000" text-anchor="middle" font-family="monospace" opacity=".7" transform="rotate(-5 46 146)">PLEASE TAKE</text>
-            <text x="46" y="153" font-size="6.5" fill="#cc0000" text-anchor="middle" font-family="monospace" opacity=".7" transform="rotate(-5 46 146)">A NUMBER</text>
-            <!-- more form lines -->
-            <rect x="20" y="175" width="52" height="5" rx="0" fill="#ccc"/>
-            <rect x="20" y="190" width="30" height="5" rx="0" fill="#ccc"/>
-            <rect x="20" y="205" width="52" height="5" rx="0" fill="#ccc"/>
-            <text x="20" y="173" font-size="4" fill="#aaa" font-family="monospace">SIGNATURE</text>
-            <circle cx="30" cy="50" r="3" fill="rgba(0,0,0,.15)"/>
-            <circle cx="60" cy="50" r="3" fill="rgba(0,0,0,.15)"/>
-            <circle cx="30" cy="230" r="3" fill="rgba(0,0,0,.15)"/>
-            <circle cx="60" cy="230" r="3" fill="rgba(0,0,0,.15)"/>
-          </svg>
-        </div>
-        <div class="bcard-name">Form 27-B</div>
-        <div class="bcard-desc">DMV form graphic<br/>"please take a number"<br/>8.375"</div>
-      </div>
-
-      <!-- IRONIC 4: Jackpot -->
-      <div class="bcard">
-        <div class="bcard-tag ir">Ironic</div>
-        <div class="deck-wrap">
-          <svg width="90" height="280" viewBox="0 0 90 280" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="g6" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#1a0030"/>
-                <stop offset="50%" stop-color="#cc0066"/>
-                <stop offset="100%" stop-color="#ffcc00"/>
-              </linearGradient>
-            </defs>
-            <path d="M 15 30 Q 10 10 45 8 Q 80 10 75 30 L 78 240 Q 80 268 45 272 Q 10 268 12 240 Z" fill="url(#g6)"/>
-            <!-- slot machine windows -->
-            <rect x="22" y="85" width="14" height="20" rx="2" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-            <rect x="38" y="85" width="14" height="20" rx="2" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-            <rect x="54" y="85" width="14" height="20" rx="2" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-            <!-- all lemons -->
-            <text x="29" y="100" font-size="11" text-anchor="middle" font-family="serif">🍋</text>
-            <text x="45" y="100" font-size="11" text-anchor="middle" font-family="serif">🍋</text>
-            <text x="61" y="100" font-size="11" text-anchor="middle" font-family="serif">🍋</text>
-            <!-- JACKPOT text -->
-            <text x="45" y="128" font-size="8" fill="#ffcc00" text-anchor="middle" font-family="monospace" letter-spacing="2" font-weight="bold">JACKPOT</text>
-            <!-- coin cascade -->
-            <circle cx="35" cy="150" r="5" fill="#ffcc00" opacity=".7"/>
-            <circle cx="50" cy="158" r="5" fill="#ffcc00" opacity=".6"/>
-            <circle cx="40" cy="168" r="5" fill="#ffcc00" opacity=".55"/>
-            <circle cx="57" cy="145" r="4" fill="#ffcc00" opacity=".65"/>
-            <circle cx="28" cy="165" r="4" fill="#ffcc00" opacity=".5"/>
-            <circle cx="52" cy="178" r="4" fill="#ffcc00" opacity=".45"/>
-            <circle cx="35" cy="185" r="3.5" fill="#ffcc00" opacity=".4"/>
-            <circle cx="63" cy="165" r="3.5" fill="#ffcc00" opacity=".45"/>
-            <circle cx="30" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="50" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="30" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-            <circle cx="60" cy="230" r="3" fill="rgba(0,0,0,.4)"/>
-          </svg>
-        </div>
-        <div class="bcard-name">Jackpot</div>
-        <div class="bcard-desc">Slot machine<br/>all lemons · bad luck<br/>8.5"</div>
-      </div>
-
-      <!-- IRONIC 5: Participant Trophy -->
-      <div class="bcard">
-        <div class="bcard-tag ir">Ironic</div>
-        <div class="deck-wrap">
-          <svg width="90" height="280" viewBox="0 0 90 280" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 15 30 Q 10 10 45 8 Q 80 10 75 30 L 78 240 Q 80 268 45 272 Q 10 268 12 240 Z" fill="#d4d8c0"/>
-            <!-- trophy shape -->
-            <path d="M 33 70 L 33 120 Q 33 145 45 148 Q 57 145 57 120 L 57 70 Z" fill="#c0c090" stroke="#a0a070" stroke-width="1"/>
-            <!-- cup handles -->
-            <path d="M 33 80 Q 18 80 20 95 Q 22 108 33 105" fill="none" stroke="#a0a070" stroke-width="2"/>
-            <path d="M 57 80 Q 72 80 70 95 Q 68 108 57 105" fill="none" stroke="#a0a070" stroke-width="2"/>
-            <!-- trophy base -->
-            <rect x="37" y="148" width="16" height="6" rx="0" fill="#b0b080"/>
-            <rect x="30" y="154" width="30" height="5" rx="1" fill="#a0a070"/>
-            <!-- star on trophy -->
-            <polygon points="45,83 47,89 53,89 48,93 50,99 45,95 40,99 42,93 37,89 43,89" fill="#d4d840" stroke="#b0b000" stroke-width="0.5"/>
-            <!-- engraving text -->
-            <text x="45" y="113" font-size="4" fill="#808060" text-anchor="middle" font-family="monospace">PARTICIPANT</text>
-            <!-- bottom text -->
-            <text x="45" y="220" font-size="5.5" fill="#808060" text-anchor="middle" font-family="monospace" letter-spacing="1">YOU SHOWED UP</text>
-            <circle cx="30" cy="50" r="3" fill="rgba(0,0,0,.15)"/>
-            <circle cx="60" cy="50" r="3" fill="rgba(0,0,0,.15)"/>
-            <circle cx="30" cy="230" r="3" fill="rgba(0,0,0,.15)"/>
-            <circle cx="60" cy="230" r="3" fill="rgba(0,0,0,.15)"/>
-          </svg>
-        </div>
-        <div class="bcard-name">Participant</div>
-        <div class="bcard-desc">Participation trophy<br/>"you showed up"<br/>8.25"</div>
-      </div>
-
+      <p class="text-[10.5px] font-bold tracking-[.14em] uppercase text-[#e0e0e0] mb-1.5 text-center">Deep Orbit</p>
+      <p class="text-[9px] text-[#3a3a3a] tracking-[.06em] leading-relaxed text-center">Ocean gradient<br/>subsurface topography · 8.25"</p>
     </div>
+
+    <!-- Void Pulse -->
+    <div class="board-card bg-[#0e0e0e] flex flex-col items-center pt-10 pb-8 px-5 relative">
+      <span class="absolute top-3.5 right-3.5 text-[7.5px] tracking-[.18em] uppercase px-2 py-0.5 border border-sb-sci text-sb-sci">Sci-Fi</span>
+      <div class="deck-art mb-6">
+        <svg width="80" height="256" viewBox="0 0 80 256" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="b2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a0010"/><stop offset="45%" stop-color="#2a0060"/><stop offset="80%" stop-color="#5500cc"/><stop offset="100%" stop-color="#c8ff00"/></linearGradient></defs>
+          <path d="M 12 26 Q 8 8 40 6 Q 72 8 68 26 L 70 222 Q 72 248 40 252 Q 8 248 10 222 Z" fill="url(#b2)"/>
+          <polyline points="14,93 19,93 23,74 27,112 31,83 35,123 39,78 43,128 47,83 51,118 55,88 59,108 63,93 68,93" fill="none" stroke="#c8ff00" stroke-width="1.4" opacity=".7"/>
+          <polyline points="14,133 19,133 23,114 27,152 31,123 35,163 39,118 43,168 47,123 51,158 55,128 59,148 63,133 68,133" fill="none" stroke="#c8ff00" stroke-width=".9" opacity=".35"/>
+          <circle cx="40" cy="100" r="4" fill="#c8ff00" opacity=".45"/>
+          <circle cx="40" cy="100" r="1.8" fill="#c8ff00"/>
+          <circle cx="26" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/>
+          <circle cx="26" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/>
+        </svg>
+      </div>
+      <p class="text-[10.5px] font-bold tracking-[.14em] uppercase text-[#e0e0e0] mb-1.5 text-center">Void Pulse</p>
+      <p class="text-[9px] text-[#3a3a3a] tracking-[.06em] leading-relaxed text-center">Dark matter field<br/>neon signal trace · 8.5"</p>
+    </div>
+
+    <!-- Bioluminescent -->
+    <div class="board-card bg-[#0e0e0e] flex flex-col items-center pt-10 pb-8 px-5 relative">
+      <span class="absolute top-3.5 right-3.5 text-[7.5px] tracking-[.18em] uppercase px-2 py-0.5 border border-sb-sci text-sb-sci">Sci-Fi</span>
+      <div class="deck-art mb-6">
+        <svg width="80" height="256" viewBox="0 0 80 256" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="b3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#001a00"/><stop offset="50%" stop-color="#003820"/><stop offset="100%" stop-color="#00ee88"/></linearGradient></defs>
+          <path d="M 12 26 Q 8 8 40 6 Q 72 8 68 26 L 70 222 Q 72 248 40 252 Q 8 248 10 222 Z" fill="url(#b3)"/>
+          <circle cx="40" cy="118" r="16" fill="none" stroke="#00ee88" stroke-width=".9" opacity=".3"/>
+          <circle cx="40" cy="118" r="9" fill="none" stroke="#00ee88" stroke-width="1.1" opacity=".5"/>
+          <circle cx="40" cy="118" r="3.5" fill="#00ee88" opacity=".7"/>
+          <line x1="34" y1="134" x2="31" y2="160" stroke="#00ee88" stroke-width=".7" opacity=".4"/>
+          <line x1="38" y1="136" x2="37" y2="163" stroke="#00ee88" stroke-width=".7" opacity=".4"/>
+          <line x1="42" y1="136" x2="43" y2="163" stroke="#00ee88" stroke-width=".7" opacity=".4"/>
+          <line x1="46" y1="134" x2="49" y2="160" stroke="#00ee88" stroke-width=".7" opacity=".4"/>
+          <circle cx="21" cy="80" r="1.3" fill="#00ee88" opacity=".4"/>
+          <circle cx="58" cy="70" r=".9" fill="#00ee88" opacity=".3"/>
+          <circle cx="24" cy="152" r="1.3" fill="#00ee88" opacity=".35"/>
+          <circle cx="60" cy="158" r=".9" fill="#00ee88" opacity=".3"/>
+          <circle cx="18" cy="188" r=".9" fill="#00ee88" opacity=".25"/>
+          <circle cx="62" cy="196" r="1.3" fill="#00ee88" opacity=".3"/>
+          <circle cx="26" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/>
+          <circle cx="26" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/>
+        </svg>
+      </div>
+      <p class="text-[10.5px] font-bold tracking-[.14em] uppercase text-[#e0e0e0] mb-1.5 text-center">Bioluminescent</p>
+      <p class="text-[9px] text-[#3a3a3a] tracking-[.06em] leading-relaxed text-center">Deep sea glow<br/>phosphor ink · 8.375"</p>
+    </div>
+
+    <!-- Red Giant -->
+    <div class="board-card bg-[#0e0e0e] flex flex-col items-center pt-10 pb-8 px-5 relative">
+      <span class="absolute top-3.5 right-3.5 text-[7.5px] tracking-[.18em] uppercase px-2 py-0.5 border border-sb-sci text-sb-sci">Sci-Fi</span>
+      <div class="deck-art mb-6">
+        <svg width="80" height="256" viewBox="0 0 80 256" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="b4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a0000"/><stop offset="40%" stop-color="#5a0000"/><stop offset="80%" stop-color="#cc2200"/><stop offset="100%" stop-color="#ff6600"/></linearGradient></defs>
+          <path d="M 12 26 Q 8 8 40 6 Q 72 8 68 26 L 70 222 Q 72 248 40 252 Q 8 248 10 222 Z" fill="url(#b4)"/>
+          <circle cx="40" cy="120" r="24" fill="none" stroke="#ff6600" stroke-width=".7" opacity=".2"/>
+          <circle cx="40" cy="120" r="16" fill="none" stroke="#ff4400" stroke-width=".9" opacity=".35"/>
+          <circle cx="40" cy="120" r="9" fill="none" stroke="#ff2200" stroke-width="1.1" opacity=".5"/>
+          <circle cx="40" cy="120" r="4.5" fill="#ff8800" opacity=".6"/>
+          <circle cx="40" cy="120" r="1.8" fill="#ffcc00"/>
+          <line x1="40" y1="96" x2="40" y2="87" stroke="#ff6600" stroke-width=".9" opacity=".5"/>
+          <line x1="40" y1="144" x2="40" y2="153" stroke="#ff6600" stroke-width=".9" opacity=".5"/>
+          <line x1="16" y1="120" x2="7" y2="120" stroke="#ff6600" stroke-width=".9" opacity=".5"/>
+          <line x1="64" y1="120" x2="73" y2="120" stroke="#ff6600" stroke-width=".9" opacity=".5"/>
+          <circle cx="26" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/>
+          <circle cx="26" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/>
+        </svg>
+      </div>
+      <p class="text-[10.5px] font-bold tracking-[.14em] uppercase text-[#e0e0e0] mb-1.5 text-center">Red Giant</p>
+      <p class="text-[9px] text-[#3a3a3a] tracking-[.06em] leading-relaxed text-center">Stellar collapse<br/>dying star sequence · 8.5"</p>
+    </div>
+
+    <!-- Good Boy -->
+    <div class="board-card bg-[#0e0e0e] flex flex-col items-center pt-10 pb-8 px-5 relative">
+      <span class="absolute top-3.5 right-3.5 text-[7.5px] tracking-[.18em] uppercase px-2 py-0.5 border border-sb-accent text-sb-accent">Ironic</span>
+      <div class="deck-art mb-6">
+        <svg width="80" height="256" viewBox="0 0 80 256" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 12 26 Q 8 8 40 6 Q 72 8 68 26 L 70 222 Q 72 248 40 252 Q 8 248 10 222 Z" fill="#f0ede8"/>
+          <line x1="12" y1="70" x2="68" y2="70" stroke="#e0ddd8" stroke-width=".9"/>
+          <line x1="12" y1="90" x2="68" y2="90" stroke="#e0ddd8" stroke-width=".9"/>
+          <rect x="16" y="69" width="8" height="140" fill="#f5f5f2" opacity=".5"/>
+          <g transform="translate(14,82) scale(0.48)">
+            <rect x="0" y="0" width="92" height="112" fill="none" stroke="#ccc" stroke-width="1.5"/>
+            <line x1="83" y1="20" x2="92" y2="20" stroke="#ccc" stroke-width="1"/>
+            <line x1="83" y1="42" x2="92" y2="42" stroke="#ccc" stroke-width="1"/>
+            <line x1="83" y1="64" x2="92" y2="64" stroke="#ccc" stroke-width="1"/>
+            <line x1="83" y1="86" x2="92" y2="86" stroke="#ccc" stroke-width="1"/>
+            <ellipse cx="46" cy="82" rx="32" ry="15" fill="#5c3a1e"/>
+            <ellipse cx="46" cy="50" rx="19" ry="17" fill="#5c3a1e"/>
+            <ellipse cx="46" cy="60" rx="12" ry="9" fill="#7a4f2a"/>
+            <ellipse cx="30" cy="49" rx="7.5" ry="16" fill="#3e2210" transform="rotate(-12 30 49)"/>
+            <ellipse cx="62" cy="49" rx="7.5" ry="16" fill="#3e2210" transform="rotate(12 62 49)"/>
+            <ellipse cx="38" cy="46" rx="5.5" ry="4.5" fill="#e8e0d0"/>
+            <ellipse cx="54" cy="46" rx="5.5" ry="4.5" fill="#e8e0d0"/>
+            <circle cx="38" cy="47" r="3.2" fill="#0e0600"/>
+            <circle cx="54" cy="47" r="3.2" fill="#0e0600"/>
+            <ellipse cx="46" cy="57" rx="3.8" ry="2.8" fill="#0e0600"/>
+            <path d="M 38 66 L 54 66" fill="none" stroke="#3a1e08" stroke-width="1.8" stroke-linecap="round"/>
+            <rect x="26" y="93" width="7.5" height="15" rx="3.8" fill="#3e2210"/>
+            <rect x="38" y="96" width="7.5" height="12" rx="3.8" fill="#3e2210"/>
+            <rect x="46" y="96" width="7.5" height="12" rx="3.8" fill="#3e2210"/>
+            <rect x="58" y="93" width="7.5" height="15" rx="3.8" fill="#3e2210"/>
+          </g>
+          <text x="40" y="234" font-size="6.5" fill="#888" text-anchor="middle" font-family="monospace" letter-spacing="2.5">DETAINED</text>
+          <circle cx="26" cy="44" r="2.5" fill="rgba(0,0,0,.15)"/><circle cx="54" cy="44" r="2.5" fill="rgba(0,0,0,.15)"/>
+          <circle cx="26" cy="212" r="2.5" fill="rgba(0,0,0,.15)"/><circle cx="54" cy="212" r="2.5" fill="rgba(0,0,0,.15)"/>
+        </svg>
+      </div>
+      <p class="text-[10.5px] font-bold tracking-[.14em] uppercase text-[#e0e0e0] mb-1.5 text-center">Good Boy</p>
+      <p class="text-[9px] text-[#3a3a3a] tracking-[.06em] leading-relaxed text-center">Clean white mugshot<br/>"DETAINED" print · 8.25"</p>
+    </div>
+
+    <!-- Slice -->
+    <div class="board-card bg-[#0e0e0e] flex flex-col items-center pt-10 pb-8 px-5 relative">
+      <span class="absolute top-3.5 right-3.5 text-[7.5px] tracking-[.18em] uppercase px-2 py-0.5 border border-sb-accent text-sb-accent">Ironic</span>
+      <div class="deck-art mb-6">
+        <svg width="80" height="256" viewBox="0 0 80 256" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="b5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff8c00"/><stop offset="100%" stop-color="#ff4500"/></linearGradient></defs>
+          <path d="M 12 26 Q 8 8 40 6 Q 72 8 68 26 L 70 222 Q 72 248 40 252 Q 8 248 10 222 Z" fill="url(#b5)"/>
+          <ellipse cx="40" cy="82" rx="24" ry="7.5" fill="#d4774a"/>
+          <polygon points="16,88 64,88 40,178" fill="#f0c060"/>
+          <circle cx="34" cy="108" r="4.5" fill="#cc2200"/>
+          <circle cx="48" cy="100" r="4" fill="#cc2200"/>
+          <circle cx="42" cy="124" r="3.5" fill="#cc2200"/>
+          <circle cx="32" cy="138" r="3" fill="#cc2200"/>
+          <circle cx="50" cy="134" r="3" fill="#cc2200"/>
+          <g transform="translate(27,152) scale(0.2)">
+            <ellipse cx="46" cy="56" rx="30" ry="13" fill="#5c3a1e"/>
+            <ellipse cx="46" cy="38" rx="16" ry="14" fill="#5c3a1e"/>
+            <ellipse cx="46" cy="46" rx="9" ry="7" fill="#7a4f2a"/>
+            <ellipse cx="31" cy="37" rx="6.5" ry="13" fill="#3e2210" transform="rotate(-12 31 37)"/>
+            <ellipse cx="61" cy="37" rx="6.5" ry="13" fill="#3e2210" transform="rotate(12 61 37)"/>
+            <circle cx="38" cy="36" r="3" fill="#0e0600"/>
+            <circle cx="54" cy="36" r="3" fill="#0e0600"/>
+            <ellipse cx="46" cy="43" rx="3" ry="2" fill="#0e0600"/>
+            <path d="M 38 48 L 54 48" fill="none" stroke="#3a1e08" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <circle cx="26" cy="44" r="2.5" fill="rgba(0,0,0,.3)"/><circle cx="54" cy="44" r="2.5" fill="rgba(0,0,0,.3)"/>
+          <circle cx="26" cy="212" r="2.5" fill="rgba(0,0,0,.3)"/><circle cx="54" cy="212" r="2.5" fill="rgba(0,0,0,.3)"/>
+        </svg>
+      </div>
+      <p class="text-[10.5px] font-bold tracking-[.14em] uppercase text-[#e0e0e0] mb-1.5 text-center">Slice</p>
+      <p class="text-[9px] text-[#3a3a3a] tracking-[.06em] leading-relaxed text-center">Pizza graphic<br/>deadpan dachshund · 8.0"</p>
+    </div>
+
+    <!-- Form 27-B -->
+    <div class="board-card bg-[#0e0e0e] flex flex-col items-center pt-10 pb-8 px-5 relative">
+      <span class="absolute top-3.5 right-3.5 text-[7.5px] tracking-[.18em] uppercase px-2 py-0.5 border border-sb-accent text-sb-accent">Ironic</span>
+      <div class="deck-art mb-6">
+        <svg width="80" height="256" viewBox="0 0 80 256" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 12 26 Q 8 8 40 6 Q 72 8 68 26 L 70 222 Q 72 248 40 252 Q 8 248 10 222 Z" fill="#e8e4dc"/>
+          <rect x="18" y="52" width="44" height="5" rx="0" fill="#ccc"/>
+          <text x="18" y="50" font-size="4" fill="#aaa" font-family="monospace">FORM 27-B</text>
+          <rect x="18" y="70" width="28" height="4.5" rx="0" fill="#ccc"/>
+          <text x="18" y="68" font-size="3.5" fill="#aaa" font-family="monospace">LAST NAME</text>
+          <rect x="50" y="70" width="12" height="4.5" rx="0" fill="#ccc"/>
+          <text x="50" y="68" font-size="3.5" fill="#aaa" font-family="monospace">D.O.B</text>
+          <rect x="18" y="86" width="44" height="4.5" rx="0" fill="#ccc"/>
+          <text x="18" y="84" font-size="3.5" fill="#aaa" font-family="monospace">ADDRESS</text>
+          <rect x="18" y="101" width="22" height="4.5" rx="0" fill="#ccc"/>
+          <rect x="44" y="101" width="8" height="4.5" rx="0" fill="#ccc"/>
+          <rect x="56" y="101" width="10" height="4.5" rx="0" fill="#ccc"/>
+          <text x="18" y="99" font-size="3.5" fill="#aaa" font-family="monospace">CITY</text>
+          <text x="44" y="99" font-size="3.5" fill="#aaa" font-family="monospace">ST</text>
+          <text x="56" y="99" font-size="3.5" fill="#aaa" font-family="monospace">ZIP</text>
+          <rect x="16" y="122" width="48" height="19" rx="1" fill="none" stroke="#cc0000" stroke-width="1.3" opacity=".6" transform="rotate(-4 40 131)"/>
+          <text x="40" y="130" font-size="5.5" fill="#cc0000" text-anchor="middle" font-family="monospace" opacity=".7" transform="rotate(-4 40 131)">PLEASE TAKE</text>
+          <text x="40" y="137" font-size="5.5" fill="#cc0000" text-anchor="middle" font-family="monospace" opacity=".7" transform="rotate(-4 40 131)">A NUMBER</text>
+          <rect x="18" y="165" width="44" height="4.5" rx="0" fill="#ccc"/>
+          <rect x="18" y="178" width="26" height="4.5" rx="0" fill="#ccc"/>
+          <rect x="18" y="191" width="44" height="4.5" rx="0" fill="#ccc"/>
+          <text x="18" y="163" font-size="3.5" fill="#aaa" font-family="monospace">SIGNATURE</text>
+          <circle cx="26" cy="44" r="2.5" fill="rgba(0,0,0,.15)"/><circle cx="54" cy="44" r="2.5" fill="rgba(0,0,0,.15)"/>
+          <circle cx="26" cy="212" r="2.5" fill="rgba(0,0,0,.15)"/><circle cx="54" cy="212" r="2.5" fill="rgba(0,0,0,.15)"/>
+        </svg>
+      </div>
+      <p class="text-[10.5px] font-bold tracking-[.14em] uppercase text-[#e0e0e0] mb-1.5 text-center">Form 27-B</p>
+      <p class="text-[9px] text-[#3a3a3a] tracking-[.06em] leading-relaxed text-center">DMV form graphic<br/>"please take a number" · 8.375"</p>
+    </div>
+
+    <!-- Jackpot -->
+    <div class="board-card bg-[#0e0e0e] flex flex-col items-center pt-10 pb-8 px-5 relative">
+      <span class="absolute top-3.5 right-3.5 text-[7.5px] tracking-[.18em] uppercase px-2 py-0.5 border border-sb-accent text-sb-accent">Ironic</span>
+      <div class="deck-art mb-6">
+        <svg width="80" height="256" viewBox="0 0 80 256" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="b6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a0030"/><stop offset="50%" stop-color="#cc0066"/><stop offset="100%" stop-color="#ffcc00"/></linearGradient></defs>
+          <path d="M 12 26 Q 8 8 40 6 Q 72 8 68 26 L 70 222 Q 72 248 40 252 Q 8 248 10 222 Z" fill="url(#b6)"/>
+          <rect x="13" y="78" width="12" height="17" rx="1.5" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.2)" stroke-width=".9"/>
+          <rect x="28" y="78" width="12" height="17" rx="1.5" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.2)" stroke-width=".9"/>
+          <rect x="43" y="78" width="12" height="17" rx="1.5" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.2)" stroke-width=".9"/>
+          <text x="19" y="91" font-size="9" text-anchor="middle" font-family="serif">🍋</text>
+          <text x="34" y="91" font-size="9" text-anchor="middle" font-family="serif">🍋</text>
+          <text x="49" y="91" font-size="9" text-anchor="middle" font-family="serif">🍋</text>
+          <text x="40" y="112" font-size="7" fill="#ffcc00" text-anchor="middle" font-family="monospace" letter-spacing="1.5" font-weight="bold">JACKPOT</text>
+          <circle cx="30" cy="135" r="4.5" fill="#ffcc00" opacity=".7"/>
+          <circle cx="47" cy="143" r="4.5" fill="#ffcc00" opacity=".6"/>
+          <circle cx="36" cy="153" r="4.5" fill="#ffcc00" opacity=".55"/>
+          <circle cx="54" cy="130" r="3.5" fill="#ffcc00" opacity=".65"/>
+          <circle cx="23" cy="150" r="3.5" fill="#ffcc00" opacity=".5"/>
+          <circle cx="49" cy="163" r="3.5" fill="#ffcc00" opacity=".45"/>
+          <circle cx="31" cy="170" r="3" fill="#ffcc00" opacity=".4"/>
+          <circle cx="59" cy="152" r="3" fill="#ffcc00" opacity=".45"/>
+          <circle cx="26" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="44" r="2.5" fill="rgba(0,0,0,.4)"/>
+          <circle cx="26" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/><circle cx="54" cy="212" r="2.5" fill="rgba(0,0,0,.4)"/>
+        </svg>
+      </div>
+      <p class="text-[10.5px] font-bold tracking-[.14em] uppercase text-[#e0e0e0] mb-1.5 text-center">Jackpot</p>
+      <p class="text-[9px] text-[#3a3a3a] tracking-[.06em] leading-relaxed text-center">Slot machine<br/>all lemons · bad luck · 8.5"</p>
+    </div>
+
+    <!-- Participant -->
+    <div class="board-card bg-[#0e0e0e] flex flex-col items-center pt-10 pb-8 px-5 relative">
+      <span class="absolute top-3.5 right-3.5 text-[7.5px] tracking-[.18em] uppercase px-2 py-0.5 border border-sb-accent text-sb-accent">Ironic</span>
+      <div class="deck-art mb-6">
+        <svg width="80" height="256" viewBox="0 0 80 256" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 12 26 Q 8 8 40 6 Q 72 8 68 26 L 70 222 Q 72 248 40 252 Q 8 248 10 222 Z" fill="#d4d8c0"/>
+          <path d="M 30 64 L 30 112 Q 30 134 40 136 Q 50 134 50 112 L 50 64 Z" fill="#b8bc90" stroke="#a0a478" stroke-width="1"/>
+          <path d="M 30 72 Q 17 72 18 87 Q 19 98 30 96" fill="none" stroke="#a0a478" stroke-width="1.8"/>
+          <path d="M 50 72 Q 63 72 62 87 Q 61 98 50 96" fill="none" stroke="#a0a478" stroke-width="1.8"/>
+          <rect x="33" y="136" width="14" height="5.5" rx="0" fill="#a8ac80"/>
+          <rect x="26" y="141" width="28" height="5" rx="1" fill="#989c70"/>
+          <polygon points="40,76 42,82 48,82 43,86 45,92 40,88 35,92 37,86 32,82 38,82" fill="#c8cc30" stroke="#a0a400" stroke-width=".5"/>
+          <text x="40" y="106" font-size="3.8" fill="#7a7e60" text-anchor="middle" font-family="monospace">PARTICIPANT</text>
+          <text x="40" y="214" font-size="5" fill="#7a7e60" text-anchor="middle" font-family="monospace" letter-spacing=".8">YOU SHOWED UP</text>
+          <circle cx="26" cy="44" r="2.5" fill="rgba(0,0,0,.15)"/><circle cx="54" cy="44" r="2.5" fill="rgba(0,0,0,.15)"/>
+          <circle cx="26" cy="212" r="2.5" fill="rgba(0,0,0,.15)"/><circle cx="54" cy="212" r="2.5" fill="rgba(0,0,0,.15)"/>
+        </svg>
+      </div>
+      <p class="text-[10.5px] font-bold tracking-[.14em] uppercase text-[#e0e0e0] mb-1.5 text-center">Participant</p>
+      <p class="text-[9px] text-[#3a3a3a] tracking-[.06em] leading-relaxed text-center">Participation trophy<br/>"you showed up" · 8.25"</p>
+    </div>
+
   </div>
 </section>
 
-<!-- ABOUT -->
+<!-- ════════════ ABOUT ════════════ -->
 <section id="about">
-  <div class="sec-head">
-    <h2>About</h2>
-    <span class="sec-label">SB Skate Collective</span>
+  <div class="flex items-end justify-between px-6 md:px-10 pt-16 pb-7 border-b border-sb-black">
+    <h2 class="text-[clamp(32px,5vw,64px)] font-black uppercase tracking-tight leading-none">About</h2>
+    <span class="text-[9px] tracking-[.2em] uppercase text-sb-grey">SB Skate Collective</span>
   </div>
-  <div class="about-grid">
+  <div class="grid grid-cols-1 md:grid-cols-2 px-6 md:px-10 py-16 gap-20">
     <div>
-      <div class="about-label">Who We Are</div>
-      <p>SB Skate Collective is a clothing and board project out of Santa Barbara, California. We make stuff we want to wear and ride — clean cuts, weird graphics, no fuss.</p>
+      <p class="text-[9px] tracking-[.2em] uppercase text-sb-grey mb-4">Who We Are</p>
+      <p class="text-[13px] leading-loose text-[#555]">SB Skate Collective is a clothing and board project out of Santa Barbara, California. We make stuff we want to wear and ride — clean cuts, weird graphics, no fuss.</p>
     </div>
     <div>
-      <div class="about-label">The Logo</div>
-      <p>The mugshot dachshund is our mascot. He didn't do it. He just looks like he did. This is a lookbook — no checkout, no waitlist. Just look.</p>
+      <p class="text-[9px] tracking-[.2em] uppercase text-sb-grey mb-4">The Logo</p>
+      <p class="text-[13px] leading-loose text-[#555]">The mugshot dachshund is our mascot. He didn't do it. He just looks like he did. This is a lookbook — no checkout, no waitlist. Just look.</p>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="foot-left">
-    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+<!-- ════════════ FOOTER ════════════ -->
+<footer class="bg-sb-black border-t border-[#111] px-6 md:px-10 py-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+  <div class="flex items-center gap-4">
+    <svg class="w-9 h-9" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="2" width="76" height="76" fill="none" stroke="#2a2a2a" stroke-width="2"/>
       <ellipse cx="38" cy="54" rx="26" ry="12" fill="#2a2a2a"/>
       <ellipse cx="38" cy="33" rx="14" ry="12" fill="#2a2a2a"/>
@@ -1359,13 +1029,13 @@
       <rect x="51" y="62" width="5" height="10" rx="2.5" fill="#1a1a1a"/>
     </svg>
     <div>
-      <div class="foot-brand">SB Skate Collective</div>
-      <div class="foot-sub">Santa Barbara, CA</div>
+      <p class="text-[9.5px] font-bold tracking-[.22em] uppercase text-[#3a3a3a]">SB Skate Collective</p>
+      <p class="text-[8.5px] text-[#222] tracking-[.1em] mt-1">Santa Barbara, CA</p>
     </div>
   </div>
-  <div class="foot-right">
-    <div>Lookbook SS26</div>
-    <div style="margin-top:6px;color:#1a1a1a;">skatesb.com</div>
+  <div class="text-right">
+    <p class="text-[8.5px] text-[#2a2a2a] tracking-[.12em]">Lookbook SS26</p>
+    <p class="text-[8px] text-[#1a1a1a] tracking-[.08em] mt-1.5">skatesb.com</p>
   </div>
 </footer>
 
